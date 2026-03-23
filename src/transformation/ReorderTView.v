@@ -5,15 +5,15 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
 
 Set Implicit Arguments.
 
@@ -34,8 +34,8 @@ Lemma read_read_tview
        loc2 ts2 released2 ord2).
 Proof.
   econs; aggrtac;
-    (try by apply WF0);
-    (try by condtac; aggrtac).
+    (try sfby apply WF0);
+    (try sfby condtac; aggrtac).
 Qed.
 
 Lemma read_write_tview
@@ -53,8 +53,8 @@ Lemma read_write_tview
        sc0 loc2 ts2 ord2).
 Proof.
   econs; aggrtac;
-    (try by apply WF0);
-    (try by condtac; aggrtac).
+    (try sfby apply WF0);
+    (try sfby condtac; aggrtac).
   repeat condtac; aggrtac; try apply WF0.
 Qed.
 
@@ -73,8 +73,8 @@ Lemma read_read_fence_tview
        ord2).
 Proof.
   econs; aggrtac;
-    (try by apply WF0);
-    (try by condtac; aggrtac).
+    (try sfby apply WF0);
+    (try sfby condtac; aggrtac).
   - repeat condtac; aggrtac; try apply WF0.
   - repeat condtac; aggrtac; try apply WF0.
   - repeat condtac; aggrtac; try apply WF0.
@@ -115,8 +115,8 @@ Lemma write_read_tview
        loc2 ts2 released2 ord2).
 Proof.
   econs; aggrtac;
-    (try by apply WF0);
-    (try by condtac; aggrtac).
+    (try sfby apply WF0);
+    (try sfby condtac; aggrtac).
   condtac; aggrtac. condtac.
   - destruct ord1; inv ORD1; inv COND0.
   - aggrtac; try apply WF0.
@@ -137,7 +137,7 @@ Lemma write_write_tview
        sc0 loc2 ts2 ord2).
 Proof.
   econs; repeat (try condtac; aggrtac).
-  all: try by apply WF0.
+  all: try sfby apply WF0.
 Qed.
 
 Lemma write_read_fence_tview
@@ -225,7 +225,7 @@ Lemma write_fence_read_tview
        loc2 ts2 released2 ord2).
 Proof.
   econs; aggrtac;
-    (try by apply WF0);
+    (try sfby apply WF0);
     (repeat (condtac; aggrtac; try apply WF0)).
 Qed.
 
@@ -259,7 +259,7 @@ Lemma write_fence_write_tview
        sc0 loc2 ts2 ord2).
 Proof.
   econs; aggrtac;
-    (try by apply WF0);
+    (try sfby apply WF0);
     (repeat (condtac; aggrtac; try apply WF0)).
 Qed.
 

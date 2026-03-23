@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,29 +13,29 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Behavior.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Behavior.
 
-Require Import PromiseConsistent.
-Require Import Trace.
-Require Import MemoryProps.
-Require Import JoinedView.
+Require Import prop.PromiseConsistent.
+Require Import prop.Trace.
+Require Import prop.MemoryProps.
+Require Import prop.JoinedView.
 
-Require Import PFStep.
-Require Import OrdStep.
-Require Import Writes.
-Require Import WStep.
-Require Import Stable.
-Require Import PFtoAPFSim.
-Require Import APFtoRASim.
-Require Import PFtoRAThread.
+Require Import ldrfpf.PFStep.
+Require Import ldrfra.OrdStep.
+Require Import ldrfra.Writes.
+Require Import ldrfra.WStep.
+Require Import ldrfra.Stable.
+Require Import ldrfra.PFtoAPFSim.
+Require Import ldrfra.APFtoRASim.
+Require Import ldrfra.PFtoRAThread.
 
 Set Implicit Arguments.
 
@@ -431,16 +431,16 @@ Module PFtoRA.
           inv SIM4. ss. econs. econs; s; eauto; try apply SIM3.
           * inv SIM_JOINED.
             apply inj_pair2 in H3, H7. subst.
-            econs; s; eauto; try by (inv SIM3; inv SIM_JOINED; ss).
+            econs; s; eauto; try sfby (inv SIM3; inv SIM_JOINED; ss).
             exploit JThread.rtc_cancel_step_future; eauto; try apply x1. s. i. des.
             exploit JThread.opt_step_future; eauto; try apply x1. s. i. des.
             exploit JThread.rtc_reserve_step_future; eauto. s. i. des.
             eapply JSim.sim_local_le; try exact LOCAL.
             etrans; eauto. refl.
           * inv SIM_APF. ss. subst.
-            econs; s; eauto; try by (inv SIM3; inv SIM_APF; ss).
+            econs; s; eauto; try sfby (inv SIM3; inv SIM_APF; ss).
           * inv SIM_RA. ss. subst.
-            econs; s; eauto; try by (inv SIM3; inv SIM_RA; ss).
+            econs; s; eauto; try sfby (inv SIM3; inv SIM_RA; ss).
           * econs; try apply SIM3; try apply NORMAL_APF.
           * econs; try apply SIM3; try apply NORMAL_RA.
           * econs; s; try apply SIM3; try apply STABLE_RA.
@@ -471,16 +471,16 @@ Module PFtoRA.
         inv SIM4. ss. econs. econs; s; eauto; try apply SIM3.
         * inv SIM_JOINED.
           apply inj_pair2 in H3, H7. subst.
-          econs; s; eauto; try by (inv SIM3; inv SIM_JOINED; ss).
+          econs; s; eauto; try sfby (inv SIM3; inv SIM_JOINED; ss).
           exploit JThread.rtc_cancel_step_future; eauto; try apply x1. s. i. des.
           exploit JThread.opt_step_future; eauto; try apply x1. s. i. des.
           exploit JThread.rtc_reserve_step_future; eauto. s. i. des.
           eapply JSim.sim_local_le; try exact LOCAL.
           etrans; eauto. refl.
         * inv SIM_APF. ss. subst.
-          econs; s; eauto; try by (inv SIM3; inv SIM_APF; ss).
+          econs; s; eauto; try sfby (inv SIM3; inv SIM_APF; ss).
         * inv SIM_RA. ss. subst.
-          econs; s; eauto; try by (inv SIM3; inv SIM_RA; ss).
+          econs; s; eauto; try sfby (inv SIM3; inv SIM_RA; ss).
         * econs; try apply SIM3; try apply NORMAL_APF.
         * econs; try apply SIM3; try apply NORMAL_RA.
         * econs; s; try apply SIM3; try apply STABLE_RA.
@@ -507,14 +507,14 @@ Module PFtoRA.
     Proof.
       revert views1 rels1 c1_j c1_apf c1_ra SIM1 WF1_PF WF1_J WF1_APF WF1_RA.
       induction STEPS; i.
-      { left. esplits; try by econs 1. ss. }
+      { left. esplits; try sfby econs 1. ss. }
       inv H. exploit sim_conf_step; eauto. i. des; eauto.
       exploit step_pf_future; eauto. i. des.
       exploit step_j_future; eauto. i. des.
       exploit step_ra_future; try exact STEP_APF; eauto. i. des.
       exploit step_ra_future; try exact STEP_RA; eauto. i. des.
       exploit IHSTEPS; eauto. i. des.
-      - left. esplits; (try by econs 2; eauto); ss.
+      - left. esplits; (try sfby econs 2; eauto); ss.
       - right. unfold RARaceW.ra_race_steps in *. des.
         esplits; [econs 2; eauto|..]; eauto.
     Qed.

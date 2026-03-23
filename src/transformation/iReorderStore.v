@@ -5,31 +5,31 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
 
-Require Import FulfillStep.
-Require Import LowerPromises.
+Require Import prop.FulfillStep.
+Require Import prop.LowerPromises.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
-Require Import SimThread.
-Require Import iCompatibility.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
+Require Import transformation.SimThread.
+Require Import transformation.iCompatibility.
 
-Require Import ReorderStep.
-Require Import ReorderAbortCommon.
-Require Import iProgressStep.
+Require Import transformation.ReorderStep.
+Require Import transformation.ReorderAbortCommon.
+Require Import transformation.iProgressStep.
 
-Require Import ITreeLang.
-Require Import Program.
+Require Import itree.ITreeLang.
+From Stdlib Require Import Program.
 
 Set Implicit Arguments.
 
@@ -122,7 +122,7 @@ Proof.
   - (* promise *)
     right.
     exploit Local.promise_step_future; eauto. i. des.
-    exploit sim_local_promise; try exact LOCAL0; (try by etrans; eauto); eauto. i. des.
+    exploit sim_local_promise; try exact LOCAL0; (try sfby etrans; eauto); eauto. i. des.
     exploit reorder_fulfill_promise; try exact FULFILL; try exact STEP_SRC; eauto. i. des.
     exploit Local.promise_step_future; eauto. i. des.
     esplits.
@@ -136,10 +136,10 @@ Proof.
       eapply Memory.future_closed_timemap; eauto.
   - (* load *)
     right.
-    exploit sim_local_read; try exact LOCAL0; (try by etrans; eauto); eauto; try refl. i. des.
+    exploit sim_local_read; try exact LOCAL0; (try sfby etrans; eauto); eauto; try refl. i. des.
     exploit reorder_fulfill_read; try exact FULFILL; try exact STEP_SRC; eauto. i. des.
     exploit Local.read_step_future; try exact STEP1; eauto. i. des.
-    exploit fulfill_write_sim_memory; eauto; try by viewtac. i. des.
+    exploit fulfill_write_sim_memory; eauto; try sfby viewtac. i. des.
     esplits.
     + ss.
     + econs 2; eauto. econs.
@@ -155,10 +155,10 @@ Proof.
     hexploit sim_local_write_bot; try exact LOCAL1;
       try match goal with
           | [|- is_true (Ordering.le _ _)] => refl
-          end; eauto; try refl; try by viewtac. i. des.
-    hexploit reorder_fulfill_write_sim_memory; try exact FULFILL; try exact STEP_SRC; eauto; try by viewtac. i. des.
-    exploit Local.write_step_future; try exact STEP1; eauto; try by viewtac. i. des.
-    exploit fulfill_write_sim_memory; eauto; try by viewtac. i. des.
+          end; eauto; try refl; try sfby viewtac. i. des.
+    hexploit reorder_fulfill_write_sim_memory; try exact FULFILL; try exact STEP_SRC; eauto; try sfby viewtac. i. des.
+    exploit Local.write_step_future; try exact STEP1; eauto; try sfby viewtac. i. des.
+    exploit fulfill_write_sim_memory; eauto; try sfby viewtac. i. des.
     esplits.
     + ss.
     + econs 2; eauto. econs.
@@ -206,9 +206,13 @@ Proof.
   pcofix CIH. i. pfold. ii. ss. splits; ss; ii.
   - inv TERMINAL_TGT. inv PR; ss.
   - exploit sim_store_mon; eauto. i.
-    dup x0. dependent destruction x1. subst.
+    match goal with
+    | [SIM: sim_store _ _ _ _ _ _ _ _ |- _] =>
+      let SIM' := fresh SIM in
+      pose proof SIM as SIM'; destruct SIM'
+    end.
     exploit (progress_program_step_non_update i2 (fun r => Ret (tt, r))); eauto.
-    { dependent destruction PR; inv REORDER0; ss. }
+    { dependent destruction PR; inv REORDER; ss. }
     i. des.
     destruct th2.
     exploit sim_store_step; eauto.
@@ -230,14 +234,14 @@ Proof.
         inv STEP_SRC; eauto. econs 2; eauto. econs; eauto.
         { econs. eauto. }
         { etrans; eauto.
-          destruct e; by inv STEP; ss; dependent destruction STATE; inv REORDER. }
+          destruct e; (inv STEP; ss; dependent destruction STATE; inv REORDER). }
       * right.
         esplits; [|eauto].
         etrans; eauto. etrans; [|eauto].
         inv STEP_SRC; eauto. econs 2; eauto. econs; eauto.
         { econs. eauto. }
         { etrans; eauto.
-          destruct e; by inv STEP; ss; dependent destruction STATE; inv REORDER. }
+          destruct e; (inv STEP; ss; dependent destruction STATE; inv REORDER). }
     + destruct SIM.
       dependent destruction STEP; ss; dependent destruction STATE. destruct e; ss.
   - exploit sim_store_mon; eauto. i. des.

@@ -9,23 +9,23 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import ITreeLang.
+Require Import itree.ITreeLang.
 
-Require Import PromiseConsistent.
+Require Import prop.PromiseConsistent.
 
-Require Import FulfillStep.
+Require Import prop.FulfillStep.
 
-Require Import iPromotionDef.
-Require Import SimCommon.
+Require Import promotion.iPromotionDef.
+Require Import promotion.SimCommon.
 
 Set Implicit Arguments.
 
@@ -350,7 +350,7 @@ Module SimThreadOther.
       { econs 2; eauto. }
       s. i. des.
       inv STEP_SRC; ss; try congr.
-      destruct pf; try by (inv STEP; inv STEP0; ss; congr).
+      destruct pf; try sfby (inv STEP; inv STEP0; ss; congr).
       esplits; eauto. congr.
     - right.
       exploit sim_thread_rtc_tau_step; try exact STEPS; eauto. i. des.

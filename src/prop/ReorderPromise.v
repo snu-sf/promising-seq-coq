@@ -8,18 +8,18 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
 
-Require Import MemoryReorder.
-Require Import PromiseConsistent.
-Require Import FulfillStep.
+Require Import prop.MemoryReorder.
+Require Import prop.PromiseConsistent.
+Require Import prop.FulfillStep.
 
 Set Implicit Arguments.
 
@@ -535,7 +535,7 @@ Lemma reorder_promise_write_aux
 Proof.
   guardH NONPF.
   exploit Local.promise_step_future; eauto. i. des.
-  exploit write_promise_fulfill; eauto; try by viewtac. i. des.
+  exploit write_promise_fulfill; eauto; try sfby viewtac. i. des.
   exploit reorder_promise_promise; try exact STEP1; eauto; ss.
   { i. subst.
     exploit Memory.promise_op; eauto. i.
@@ -555,8 +555,8 @@ Proof.
     exploit reorder_promise_fulfill; try exact STEP6; eauto.
     { i. eapply STEP6; eauto. }
     i. des.
-    exploit fulfill_step_future; try exact STEP7; try exact WF0; eauto; try by viewtac. i. des.
-    exploit promise_fulfill_write; try exact STEP4; eauto; try by viewtac.
+    exploit fulfill_step_future; try exact STEP7; try exact WF0; eauto; try sfby viewtac. i. des.
+    exploit promise_fulfill_write; try exact STEP4; eauto; try sfby viewtac.
     { i. hexploit ORD; eauto. i.
       eapply promise_step_nonsynch_loc_inv; try exact STEP1; eauto.
     }
@@ -592,7 +592,7 @@ Proof.
   { i. subst. split.
     - ii. subst. ss. inv STEP1.
       exploit Memory.promise_get2; eauto. i. des. inv PROMISE.
-      exploit promise_consistent_promise_write; eauto; try by destruct msg1. i.
+      exploit promise_consistent_promise_write; eauto; try sfby destruct msg1. i.
       inv MEM. inv SPLIT. timetac.
     - ii. subst. ss. inv STEP1.
       exploit Memory.promise_get2; eauto. i. des. inv PROMISE.
@@ -1015,7 +1015,7 @@ Proof.
     esplits; eauto.
     right. esplits. econs; eauto.
   - (* read *)
-    exploit reorder_promise_read; try exact LOCAL0; eauto; try by viewtac.
+    exploit reorder_promise_read; try exact LOCAL0; eauto; try sfby viewtac.
     { ii. inv H.
       inv LOCAL0. exploit Memory.promise_get2; eauto.
       { destruct kind, msg; ss. }
@@ -1037,7 +1037,7 @@ Proof.
       * inv STEP2. left. auto.
       * right. esplits. econs; eauto.
   - (* update *)
-    exploit reorder_promise_read; try exact LOCAL1; eauto; try by viewtac.
+    exploit reorder_promise_read; try exact LOCAL1; eauto; try sfby viewtac.
     { ii. inv H.
       inv LOCAL0. exploit Memory.promise_get2; eauto.
       { destruct kind, msg; ss. }
@@ -1050,7 +1050,7 @@ Proof.
     }
     i. des.
     exploit Local.read_step_future; eauto. i. des.
-    exploit reorder_promise_write; try exact LOCAL2; eauto; try by viewtac.
+    exploit reorder_promise_write; try exact LOCAL2; eauto; try sfby viewtac.
     { destruct kind, msg; ss; eauto. repeat condtac; ss; eauto. }
     { destruct kind, msg; ss. }
     i. des. esplits.
@@ -1105,20 +1105,20 @@ Proof.
     inv LOCAL0. inv LOCAL2. inv RACE. ss.
     exploit MemoryFacts.promise_get_inv_diff; try exact PROMISE; eauto.
     { ii. inv H.
-      exploit Memory.promise_get2; try exact PROMISE; try by (destruct kind; ss). i. des. congr. }
+      exploit Memory.promise_get2; try exact PROMISE; try sfby (destruct kind; ss). i. des. congr. }
     i. des.
     destruct (Memory.get loc0 to0 lc1.(Local.promises)) as [[]|] eqn:GETP1.
-    { exploit Memory.promise_get1_promise; eauto; try by (destruct kind; ss). i. des. congr. }
+    { exploit Memory.promise_get1_promise; eauto; try sfby (destruct kind; ss). i. des. congr. }
     esplits; eauto. right. esplits. econs; eauto.
   - (* racy write *)
     inv LOCAL0. inv LOCAL2. inv RACE. ss.
     hexploit promise_step_promise_consistent; eauto. i.
     exploit MemoryFacts.promise_get_inv_diff; try exact PROMISE; eauto.
     { ii. inv H0.
-      exploit Memory.promise_get2; try exact PROMISE; try by (destruct kind; ss). i. des. congr. }
+      exploit Memory.promise_get2; try exact PROMISE; try sfby (destruct kind; ss). i. des. congr. }
     i. des.
     destruct (Memory.get loc0 to0 lc1.(Local.promises)) as [[]|] eqn:GETP1.
-    { exploit Memory.promise_get1_promise; eauto; try by (destruct kind; ss). i. des. congr. }
+    { exploit Memory.promise_get1_promise; eauto; try sfby (destruct kind; ss). i. des. congr. }
     esplits; eauto. right. esplits. econs; eauto.
   - (* racy update *)
     hexploit promise_step_promise_consistent; eauto. i.
@@ -1128,10 +1128,10 @@ Proof.
     inv RACE. ss.
     exploit MemoryFacts.promise_get_inv_diff; try exact PROMISE; eauto.
     { ii. inv H0.
-      exploit Memory.promise_get2; try exact PROMISE; try by (destruct kind; ss). i. des. congr. }
+      exploit Memory.promise_get2; try exact PROMISE; try sfby (destruct kind; ss). i. des. congr. }
     i. des.
     destruct (Memory.get loc0 to0 lc1.(Local.promises)) as [[]|] eqn:GETP1.
-    { exploit Memory.promise_get1_promise; eauto; try by (destruct kind; ss). i. des. congr. }
+    { exploit Memory.promise_get1_promise; eauto; try sfby (destruct kind; ss). i. des. congr. }
     esplits; eauto.
     right. esplits. econs; eauto.
 Qed.

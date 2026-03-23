@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,21 +13,21 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import SimMemory.
-Require Import MemoryProps.
-Require Import JoinedView.
-Require Import JoinedViewExist.
+Require Import transformation.SimMemory.
+Require Import prop.MemoryProps.
+Require Import prop.JoinedView.
+Require Import prop.JoinedViewExist.
 
-Require Import Program.
+From Stdlib Require Import Program.
 
 Set Implicit Arguments.
 
@@ -40,19 +40,19 @@ Lemma read_tview_plain_cur
   TView.read_tview tview loc to released ord = tview.
 Proof.
   unfold TView.read_tview. destruct tview. ss. f_equal.
-  { condtac; try by destruct ord; ss.
+  { condtac; try sfby destruct ord; ss.
     rewrite View.join_bot_r.
     apply View.antisym; try apply View.join_l.
     apply View.join_spec; try refl.
     unfold View.singleton_ur_if.
-    condtac; try by destruct ord; ss.
+    condtac; try sfby destruct ord; ss.
     unfold View.singleton_rw.
     econs; try apply TimeMap.bot_spec. ss.
     ii. unfold TimeMap.singleton, LocFun.add, LocFun.init, LocFun.find.
     condtac; try apply Time.bot_spec.
     subst. ss.
   }
-  { condtac; try by destruct ord; ss.
+  { condtac; try sfby destruct ord; ss.
     rewrite View.join_bot_r.
     apply View.antisym; try apply View.join_l.
     apply View.join_spec; try refl.
@@ -160,8 +160,8 @@ Proof.
   left. esplits; eauto.
 Qed.
 
-Require Import DelayedStep.
-Require Import NoMix.
+Require Import sequential.DelayedStep.
+Require Import sequential.NoMix.
 
 Section POINTABLE.
   Variable loc_na: Loc.t -> Prop.
@@ -613,9 +613,9 @@ Section POINTABLE.
   Qed.
 End POINTABLE.
 
-Require Import Pred.
-Require Import Delayed.
-Require Import Sequential.
+Require Import prop.Pred.
+Require Import sequential.Delayed.
+Require Import sequential.Sequential.
 
 Section NA.
   Variable loc_na: Loc.t -> Prop.

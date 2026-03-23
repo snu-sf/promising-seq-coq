@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,20 +13,20 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import PromiseConsistent.
-Require Import Mapping.
+Require Import prop.PromiseConsistent.
+Require Import prop.Mapping.
 
-Require Import PFStep.
-Require Import OrdStep.
+Require Import ldrfpf.PFStep.
+Require Import ldrfra.OrdStep.
 
 Set Implicit Arguments.
 
@@ -192,11 +192,11 @@ Module SCLocal.
         exploit Local.read_step_future; eauto. i. des.
         esplits; eauto; try refl.
       - inv LOCAL.
-        exploit Local.write_step_future; eauto; try by econs. i. des.
+        exploit Local.write_step_future; eauto; try sfby econs. i. des.
         esplits; eauto; try refl.
       - inv LOCAL1. inv LOCAL2.
         exploit Local.read_step_future; eauto. i. des.
-        exploit Local.write_step_future; eauto; try by econs. i. des.
+        exploit Local.write_step_future; eauto; try sfby econs. i. des.
         esplits; eauto. etrans; eauto.
       - exploit Local.fence_step_future; eauto. i. des. esplits; eauto; try refl.
       - exploit Local.fence_step_future; eauto. i. des. esplits; eauto; try refl.

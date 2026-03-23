@@ -5,7 +5,7 @@ From PromisingLib Require Import Axioms.
 From PromisingLib Require Import Basic.
 From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
-Require Import Sequential.
+Require Import sequential.Sequential.
 
 From PromisingLib Require Import Event.
 

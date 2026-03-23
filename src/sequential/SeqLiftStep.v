@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -10,33 +10,33 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import Cover.
-Require Import MemorySplit.
-Require Import MemoryMerge.
-Require Import FulfillStep.
-Require Import MemoryProps.
+Require Import prop.Cover.
+Require Import prop.MemorySplit.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
+Require Import prop.MemoryProps.
 
-Require Import LowerMemory.
-Require Import JoinedView.
+Require Import sequential.LowerMemory.
+Require Import prop.JoinedView.
 
-Require Import MaxView.
-Require Import Delayed.
+Require Import sequential.MaxView.
+Require Import sequential.Delayed.
 
-Require Import Lia.
+From Stdlib Require Import Lia.
 
-Require Import JoinedView.
-Require Import SeqLift.
-Require Import Sequential.
+Require Import prop.JoinedView.
+Require Import sequential.SeqLift.
+Require Import sequential.Sequential.
 
 
 Record sim_tview
@@ -751,7 +751,7 @@ Proof.
   inv PROMISE. eapply promise_max_values_src; eauto.
 Qed.
 
-Require Import Pred.
+Require Import prop.Pred.
 
 Lemma promise_steps_max_values_src
       lang st0 st1 lc0 lc1 sc0 sc1 mem0 mem1 vs
@@ -2396,7 +2396,7 @@ Lemma local_read_fence_tview_wf tview sc ordr ordw
   :
     TView.wf (local_read_fence_tview tview sc ordr ordw).
 Proof.
-  econs; ss; des_ifs; ss; try by (eapply WF).
+  econs; ss; des_ifs; ss; try sfby (eapply WF).
   { econs; ss. refl. }
   { econs; ss. eapply timemap_join_mon; [|refl]. eapply WF. }
   { rewrite View.join_bot_r. apply WF. }
@@ -2502,7 +2502,7 @@ Lemma local_write_fence_tview_wf tview ord
   :
     TView.wf (local_write_fence_tview tview ord).
 Proof.
-  econs; ss; des_ifs; ss; try by (eapply WF).
+  econs; ss; des_ifs; ss; try sfby (eapply WF).
   { i. eapply WF. }
   { i. refl. }
 Qed.
@@ -3876,14 +3876,7 @@ Proof.
   { eapply sim_closed_memory_future; eauto. eapply Memory.future_future_weak; eauto. }
   { ss. des_ifs. eapply Memory.add_get0; eauto. }
   { hexploit sim_memory_get; eauto; ss. i. des. inv MSG.
-    { econs; eauto.
-      { refl. }
-      { econs. }
-    }
-    { econs; eauto.
-      { refl. }
-      { econs. }
-    }
+    all: econs; eauto; try refl; try econs.
   }
   { ss. }
   { i. eapply MAX0 in GETTGT; eauto.
@@ -4507,9 +4500,7 @@ Proof.
         { eauto. }
         { eauto. }
       }
-      { econs; eauto. eapply sim_local_write_fence_tview_normal; eauto.
-        rewrite ORD. auto.
-      }
+      { econs; eauto. eapply sim_local_write_fence_tview_normal; eauto. }
     }
     { ii. hexploit (MAXSRC loc). i. inv H. econs; eauto. }
     { ii. hexploit (MAXTGT loc). i. inv H. econs; eauto. }
@@ -5183,7 +5174,7 @@ Lemma local_write_sync_tview_wf tview loc ord
   :
   TView.wf (local_write_sync_tview tview loc ord).
 Proof.
-  econs; ss; i; des_ifs; try by (eapply WF). refl.
+  econs; ss; i; des_ifs; try sfby (eapply WF). refl.
 Qed.
 
 Lemma local_write_sync_tview_closed mem tview loc ord
@@ -5192,7 +5183,7 @@ Lemma local_write_sync_tview_closed mem tview loc ord
   TView.closed (local_write_sync_tview tview loc ord) mem.
 Proof.
   unfold local_write_sync_tview.
-  econs; i; ss; des_ifs; try by (eapply TVIEW).
+  econs; i; ss; des_ifs; try sfby (eapply TVIEW).
 Qed.
 
 Lemma local_write_sync_tview_incr tview loc ord
@@ -5378,9 +5369,7 @@ Proof.
       { i. ss. eauto. }
       { i. ss. }
     }
-    { econs; eauto. eapply sim_write_sync_tview_normal; eauto.
-      destruct ord; ss.
-    }
+    { econs; eauto. eapply sim_write_sync_tview_normal; eauto. }
   }
   { ii. hexploit (MAXSRC loc0). i. inv H. econs; ss. }
   { eapply max_values_tgt_mon; eauto. }

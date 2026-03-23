@@ -1,6 +1,6 @@
 Set Implicit Arguments.
 
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -12,19 +12,19 @@ From PromisingLib Require Import Axioms.
 
 From PromisingLib Require Import Event.
 
-Require Import FoldN.
-Require Import Knowledge.
+Require Import optimizer.FoldN.
+Require Import optimizer.Knowledge.
 
-Require Import Sequential.
-Require Import FlagAux.
-Require Import SimAux.
-Require Import SeqAux.
-Require Import Opt2.
+Require Import sequential.Sequential.
+Require Import sequential.FlagAux.
+Require Import optimizer.SimAux.
+Require Import sequential.SeqAux.
+Require Import optimizer.Opt2.
 
-Require Import ITreeLang.
+Require Import itree.ITreeLang.
 
-Require Import DeadStoreElim.
-Require Import DeadStoreElimProof1.
+Require Import optimizer.DeadStoreElim.
+Require Import optimizer.DeadStoreElimProof1.
 
 
 
@@ -747,7 +747,7 @@ Section MATCH.
           2:{ econs; eauto. refl. }
           { econs; eauto. unfold to_deferred. ii. unfold_flags. unfold match_mem in MM; specialize MM with loc.
             rewrite update_fence_w_ord1 in *; auto. depgen MM. clear; i.
-            destruct (mp loc); ss; des. all: rewrite flag_join_bot_r. all: try by (rewrite MM0; refl).
+            destruct (mp loc); ss; des. all: rewrite flag_join_bot_r. all: try sfby (rewrite MM0; refl).
             all: match goal with | [|- _ (_ ?a ?b)] => destruct a, b; ss end.
             all: hexploit MM; auto; i; des; clarify.
           }
@@ -878,7 +878,7 @@ Section MATCH.
       SeqEvent.wf_input ev i_src /\
       match_mem mp mem_src mem_tgt.
   Proof.
-    i. destruct ev; try by ss. all: inv EVENT.
+    i. destruct ev; try sfby ss. all: inv EVENT.
     eapply mm_load_at; eauto. eapply mm_update_failure_at; eauto.
     eapply mm_store_at; eauto. eapply mm_update_success_at; eauto.
     eapply mm_fence; eauto. eapply mm_syscall; eauto.

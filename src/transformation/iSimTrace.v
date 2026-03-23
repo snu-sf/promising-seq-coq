@@ -6,25 +6,25 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import FulfillStep.
+Require Import prop.FulfillStep.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
-Require Import SimThread.
-Require Import iCompatibility.
-Require Import SimTraceCommon.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
+Require Import transformation.SimThread.
+Require Import transformation.iCompatibility.
+Require Import transformation.SimTraceCommon.
 
-Require Import ITreeLang.
+Require Import itree.ITreeLang.
 
 Set Implicit Arguments.
 
@@ -156,7 +156,7 @@ Proof.
       right.
       inv EVT. inv STEP_SRC.
       * esplits;
-          (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
+          (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
           (try exact SC);
           eauto; ss.
         { econs 1. }
@@ -168,7 +168,7 @@ Proof.
           }
         }
       * esplits;
-          (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
+          (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
           (try exact SC);
           eauto; ss.
         { econs 2. econs 2. econs; [|econs 1]; eauto. }
@@ -184,7 +184,7 @@ Proof.
       inv EVT. inv STEP_SRC.
       exploit sim_local_read; eauto. i. des.
       esplits;
-        (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
+        (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
         (try exact SC).
       * ss.
       * econs 2. econs 2. econs; [|econs 2]; eauto.
@@ -202,9 +202,9 @@ Proof.
         (try exact LOCAL1);
         (try exact LOCAL);
         (try exact SC);
-        eauto; try refl; try by viewtac. i. des.
+        eauto; try refl; try sfby viewtac. i. des.
       esplits;
-        (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
+        (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
         (try exact SC).
       * ss.
       * econs 2. econs 2. econs; [|econs 3]; eauto.
@@ -225,9 +225,9 @@ Proof.
       hexploit sim_local_write_bot;
         (try exact LOCAL0);
         (try exact SC);
-        eauto; try refl; try by viewtac. i. des.
+        eauto; try refl; try sfby viewtac. i. des.
       esplits;
-        (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
+        (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
         (try exact SC).
       * ss.
       * econs 2. econs 2. econs; [|econs 4]; eauto.
@@ -247,7 +247,7 @@ Proof.
         (try exact SC);
         eauto; try refl. i. des.
       esplits;
-        (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
+        (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
         (try exact SC).
       * ss.
       * econs 2. econs 2. econs; [|econs 5]; eauto.
@@ -267,7 +267,7 @@ Proof.
         (try exact SC);
         eauto; try refl. i. des.
       esplits;
-        (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
+        (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
         (try exact SC).
       * ss.
       * econs 2. econs 2.
@@ -288,7 +288,7 @@ Proof.
         eauto. i. des.
       unfold Thread.steps_failure.
       esplits;
-        (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto).
+        (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto).
       * econs 2. econs; [|econs 7]; eauto.
       * ss.
     + (* na write *)
@@ -299,7 +299,7 @@ Proof.
         (try exact SC);
         eauto; try refl. i. des.
       esplits;
-        (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
+        (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
         (try exact SC2).
       * ss.
       * econs 2. econs 2. econs; [|econs 8]; eauto.
@@ -314,7 +314,7 @@ Proof.
       inv EVT. inv STEP_SRC.
       exploit sim_local_racy_read; eauto. i. des.
       esplits;
-        (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
+        (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
         (try exact SC).
       * ss.
       * econs 2. econs 2. econs; [|econs 9]; eauto.
@@ -331,7 +331,7 @@ Proof.
       exploit sim_local_racy_write; eauto. i. des.
       unfold Thread.steps_failure.
       esplits;
-        (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
+        (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
         (try exact SC).
       * econs 2. econs; [|econs 10]; eauto.
       * ss.
@@ -341,7 +341,7 @@ Proof.
       exploit sim_local_racy_update; eauto. i. des.
       unfold Thread.steps_failure.
       esplits;
-        (try by apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
+        (try sfby apply rtc_lang_tau_step_rtc_thread_tau_step; eauto);
         (try exact SC).
       * econs 2. econs; [|econs 11]; eauto.
       * ss.
@@ -578,23 +578,23 @@ Proof.
     { econs. }
     { econs 2. econs; eauto. }
     gbase. eauto.
-  - pclearbot. gstep. econs.
+  - (* vis case *)
+    pclearbot. gstep. econs.
     { ii. inv TERMINAL_TGT. apply f_equal with (f:=observe) in H; ss. }
-    ii. ss. dependent destruction STEP_TGT.
-    + right. esplits; [econs; refl|eauto|econs 2|gbase; apply CIH; eauto]; econs; eauto.
-    + right. esplits; [econs; refl|eauto|econs 2|gbase; apply CIH; eauto]; econs; eauto.
-    + right. esplits; [econs; refl|eauto|econs 2|gbase; apply CIH; eauto]; econs; eauto.
-    + right. esplits; [econs; refl|eauto|econs 2|gbase; apply CIH; eauto]; econs; eauto.
-    + right. esplits; [econs; refl|eauto|econs 2|gbase; apply CIH; eauto]; econs; eauto.
-    + right. esplits; [econs; refl|eauto|econs 2|gbase; apply CIH; eauto]; econs; eauto.
-    + right. esplits; [econs; refl|eauto|econs 2|gbase; apply CIH; eauto]; econs; eauto.
-    + left. econs. esplits; eauto. econs.
+    ii. ss. dependent destruction STEP_TGT;
+    try (right; esplits; [econs; refl|eauto|econs 2|gbase; apply CIH;
+         match goal with [H: forall _, _ |- _] => exact (H _) end];
+         econs; eauto; fail);
+    try (left; econs; esplits; eauto; econs; fail).
   - guclo tauF_l_uclo. econs; eauto. econs. eapply bisim_is_eq. symmetry. eapply itree_eta.
-  - gstep. econs.
+  - (* tau_r case *)
+    gstep. econs.
     { ii. inv TERMINAL_TGT. apply f_equal with (f:=observe) in H; ss. }
     ii. ss. right.
     dependent destruction STEP_TGT.
-    esplits; [econs; refl|eauto|econs 1|]. gbase. eauto.
+    esplits; [econs; refl|eauto|econs 1|].
+    replace t2 with (go (observe t2)) by (apply bisim_is_eq; symmetry; apply itree_eta).
+    eapply gpaco5_mon; [exact IHEUTT|..]; ii; ss.
   Unshelve. all: try exact ITree.spin.
 Qed.
 

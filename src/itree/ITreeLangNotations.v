@@ -1,4 +1,4 @@
-From ITree Require Export ITree Subevent.
+From ITree Require Export ITree Core.Subevent.
 
 From ITree Require Export
      ITree
@@ -6,7 +6,7 @@ From ITree Require Export
      Events.MapDefault
      Events.State
      Events.StateFacts
-     EqAxiom
+     Eq.EqAxiom
 .
 
 Export SumNotations.
@@ -18,16 +18,16 @@ Open Scope cat_scope.
 Open Scope monad_scope.
 Open Scope itree_scope.
 
-Require Import String.
+From Stdlib Require Import String.
 
 From sflib Require Import sflib.
 
 From PromisingLib Require Import Basic.
 
 From PromisingLib Require Import Event.
-Require Export ITreeLib.
+Require Export itree.ITreeLib.
 
-Require Import ITreeLang.
+Require Import itree.ITreeLang.
 
 Set Implicit Arguments.
 
@@ -115,7 +115,7 @@ End ITreeLangNotations.
 
 
 Import ITreeLangNotations.
-Require Import BinNums.
+From Stdlib Require Import BinNums.
 
 (* ========================================================================== *)
 (** ** Example *)

@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From Paco Require Import paco.
 From sflib Require Import sflib.
@@ -8,28 +8,28 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import DataStructure.
 From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
-Require Import Time.
+Require Import lang.Time.
 From PromisingLib Require Import Event.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
-Require Import Behavior.
-Require Import Cover.
-Require Import Pred.
-Require Import Trace.
-Require Import JoinedView.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
+Require Import lang.Behavior.
+Require Import prop.Cover.
+Require Import prop.Pred.
+Require Import prop.Trace.
+Require Import prop.JoinedView.
 
-Require Import MemoryProps.
-Require Import OrderedTimes.
-Require Import MemoryReorder.
+Require Import prop.MemoryProps.
+Require Import prop.OrderedTimes.
+Require Import prop.MemoryReorder.
 
-Require Import PFStep.
+Require Import ldrfpf.PFStep.
 
 Set Implicit Arguments.
 
@@ -682,9 +682,9 @@ Section SIM.
       to0 = to1.
   Proof.
     set (MEM0:=(sim_memory_contents MEM) loc to0).
-    inv MEM0; try by (exfalso; eapply NEXTRA; eauto).
+    inv MEM0; try sfby (exfalso; eapply NEXTRA; eauto).
     set (MEM1:=(sim_memory_contents MEM) loc to1).
-    inv MEM1; try by (exfalso; eapply NEXTRA; eauto). clarify.
+    inv MEM1; try sfby (exfalso; eapply NEXTRA; eauto). clarify.
     apply (sim_memory_wf MEM) in EXTRA0. des.
     exploit UNIQUE; eauto. i. subst.
     apply (sim_memory_wf MEM) in EXTRA1. des.
@@ -1023,7 +1023,7 @@ Section SIM.
     ii. set (PROM:= (sim_promise_contents SIM) loc ts).
     destruct (classic (List.In (loc,ts) l')).
     - right. splits; auto.
-    - left. red. inv PROM; try by (econs; eauto).
+    - left. red. inv PROM; try sfby (econs; eauto).
       + apply NNPP. ii. exploit FIN; eauto. i.
         hexploit (proj1 (@COMPLETE (loc, ts))); auto.
         splits; auto. ii. rewrite H1 in *. rewrite H2 in *. auto.
@@ -1616,7 +1616,7 @@ Section SIM.
         { ii. set (MEM1:= (sim_memory_contents MEM) loc0 ts).
           erewrite (@Memory.add_o mem_src'); eauto.
           erewrite (@Memory.add_o mem_tgt'); eauto.
-          des_ifs; try by (ss; des; clarify).
+          des_ifs; try sfby (ss; des; clarify).
           * econs; eauto.
             { ii. ss. des; clarify; eauto. }
             { ii. ss. des; clarify; eauto. }
@@ -1659,7 +1659,7 @@ Section SIM.
         { ii. set (MEM1:=(sim_memory_contents MEM) loc0 ts).
           erewrite (@Memory.split_o mem_src'); eauto.
           erewrite (@Memory.split_o mem_tgt'); eauto.
-          des_ifs; try by (ss; des; clarify).
+          des_ifs; try sfby (ss; des; clarify).
           { ss. des; clarify. econs; eauto.
             * refl.
             * i. ss. }
@@ -1737,7 +1737,7 @@ Section SIM.
         { ii. set (MEM1:=(sim_memory_contents MEM) loc0 ts).
           erewrite (@Memory.remove_o mem_src'); eauto.
           erewrite (@Memory.remove_o mem_tgt'); eauto.
-          des_ifs; try by (des; ss; clarify).
+          des_ifs; try sfby (des; ss; clarify).
           * ss. des; clarify. econs; eauto. }
         { apply MEM. }
       + econs.
@@ -2016,9 +2016,9 @@ Section SIM.
           { hexploit ((sim_memory_wf MEM) loc from2 to2); eauto. i. des.
             ii. inv LHS. inv RHS. ss.
             set (MEM1:=(sim_memory_contents MEM) loc from_src).
-            inv MEM1; try by (exfalso; eapply NEXTRA; eauto); ss.
+            inv MEM1; try sfby (exfalso; eapply NEXTRA; eauto); ss.
             set (MEM2:=(sim_memory_contents MEM) loc to2).
-            inv MEM2; try by (exfalso; eapply NEXTRA; eauto); ss.
+            inv MEM2; try sfby (exfalso; eapply NEXTRA; eauto); ss.
             symmetry in H1. symmetry in H3. hexploit memory_get_disjoint_strong.
             { eapply H3. }
             { eapply H1. }
@@ -2053,7 +2053,7 @@ Section SIM.
             { hexploit ((sim_memory_wf MEM) loc from2 to2); eauto. i. des.
               ii. inv LHS. inv RHS. ss.
               set (MEM1:=(sim_memory_contents MEM) loc from2).
-              inv MEM1; try by (exfalso; eapply NPROM; eauto); ss.
+              inv MEM1; try sfby (exfalso; eapply NPROM; eauto); ss.
               symmetry in H2. hexploit memory_get_disjoint_strong.
               { eapply Memory.add_get0. eapply MEM0. }
               { eapply Memory.add_get1; eauto. }
@@ -2655,7 +2655,7 @@ Section SIM.
 
     set (MEM0 := (sim_memory_contents MEM) loc to).
     rewrite GETMEMSRC in *. rewrite GETMEMTGT in *.
-    inv MEM0; try by (exfalso; apply NPROM; right; auto).
+    inv MEM0; try sfby (exfalso; apply NPROM; right; auto).
 
     specialize (FROMSRC1 _ _ eq_refl).
     specialize (EMPTY _ _ eq_refl).
@@ -2748,14 +2748,14 @@ Section SIM.
 
     destruct (classic (exists to', <<EXTRA: extra_self loc to0 to'>>)) as [?|MINE].
     { des. set (PROM1 := (sim_promise_contents PROMISE) loc to0).
-      inv PROM1; try by (exfalso; eapply NEXTRA1; eauto); ss.
+      inv PROM1; try sfby (exfalso; eapply NEXTRA1; eauto); ss.
       rewrite GET in *. clarify.
       assert (to' = to).
       { hexploit (sim_memory_wf MEM).
         { right. eapply EXTRA0. }
         i. des. eapply UNIQUE. right. auto. } subst.
       set (MEM1 := (sim_memory_contents MEM) loc to0).
-      inv MEM1; try by (exfalso; eapply NEXTRA1; right; eauto); ss.
+      inv MEM1; try sfby (exfalso; eapply NEXTRA1; right; eauto); ss.
       dup GET. apply MLESRC in GET. rewrite GET in *. clarify.
 
       exists prom_src0, mem_src0, mem_src1, prom_src0, mem_src1,
@@ -2831,7 +2831,7 @@ Section SIM.
     { dup GET. eapply MLESRC in GET1.
       assert (NOEXTRA: forall ts', ~ (extra_others \\3// extra_self) loc ts' to).
       { ii. set (MEM1:=(sim_memory_contents MEM) loc ts').
-        inv MEM1; ss; try by (exfalso; eapply NEXTRA1; eauto).
+        inv MEM1; ss; try sfby (exfalso; eapply NEXTRA1; eauto).
         hexploit ((sim_memory_wf MEM) loc from ts'); eauto. i. des.
         eapply UNIQUE in H. subst.
         hexploit memory_get_from_inj.
@@ -2977,7 +2977,7 @@ Section SIM.
 
     set (MEM0 := (sim_memory_contents MEM) loc to).
     rewrite GETMEMSRC in *. rewrite GETMEMTGT in *.
-    inv MEM0; try by (exfalso; apply NPROM; right; auto).
+    inv MEM0; try sfby (exfalso; apply NPROM; right; auto).
 
     exists from_src. eapply sim_fulfill_forget; eauto.
     { i. clarify. refl. }
@@ -3032,7 +3032,7 @@ Section SIM.
 
     set (MEM0 := (sim_memory_contents MEM) loc to).
     rewrite GETMEMSRC in *. rewrite GETMEMTGT in *.
-    inv MEM0; try by (exfalso; apply NPROM; right; auto).
+    inv MEM0; try sfby (exfalso; apply NPROM; right; auto).
 
     eapply sim_fulfill_forget; eauto.
     { refl. }
@@ -3707,7 +3707,7 @@ Section SIM.
   Proof.
     inv STEPTGT. inv LCSRC. inv LCTGT. inv LOCAL. inv WRITE. ss.
     hexploit Memory.promise_future; try apply PROMISE; eauto.
-    { econs. inv PROMISE; try by (eapply TViewFacts.op_closed_released; eauto). } i. des.
+    { econs. inv PROMISE; try sfby (eapply TViewFacts.op_closed_released; eauto). } i. des.
 
     hexploit sim_promise_forget; ss; eauto. i. des.
     eapply reserve_loc_future_reserve_future in STEPSRC.

@@ -1,5 +1,5 @@
-Require Import Lia.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -12,18 +12,18 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import ITreeLang.
+Require Import itree.ITreeLang.
 
-Require Import PromiseConsistent.
+Require Import prop.PromiseConsistent.
 
 Set Implicit Arguments.
 
@@ -180,7 +180,7 @@ Lemma loc_free_step_is_accessing_loc
   ~ ThreadEvent.is_accessing_loc l e.
 Proof.
   punfold LOCFREE.
-  inv STEP; try (by destruct e); ss;
+  inv STEP; try (sfby destruct e); ss;
     dependent destruction LOCFREE.
   - destruct e; ss; clarify.
   - destruct e; ss; clarify.

@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From Paco Require Import paco.
 From sflib Require Import sflib.
@@ -8,34 +8,34 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import DataStructure.
 From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
-Require Import Time.
+Require Import lang.Time.
 From PromisingLib Require Import Event.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
-Require Import Behavior.
-Require Import Cover.
-Require Import PromiseConsistent.
-Require Import Pred.
-Require Import Trace.
-Require Import JoinedView.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
+Require Import lang.Behavior.
+Require Import prop.Cover.
+Require Import prop.PromiseConsistent.
+Require Import prop.Pred.
+Require Import prop.Trace.
+Require Import prop.JoinedView.
 
-Require Import MemoryProps.
-Require Import OrderedTimes.
-Require Import Single.
-Require SimMemory.
+Require Import prop.MemoryProps.
+Require Import prop.OrderedTimes.
+Require Import prop.Single.
+Require transformation.SimMemory.
 
-Require Import TimeTraced.
-Require Import PFStep.
-Require Import LocalPFThread.
-Require Import LocalPFSim.
-Require Import JoinedViewExist.
+Require Import ldrfpf.TimeTraced.
+Require Import ldrfpf.PFStep.
+Require Import ldrfpf.LocalPFThread.
+Require Import ldrfpf.LocalPFSim.
+Require Import prop.JoinedViewExist.
 
 Set Implicit Arguments.
 
@@ -151,12 +151,12 @@ Proof.
     destruct (Memory.get loc ts prom) as [[from [val released| |]]|] eqn:EQ; ss.
     - econs; eauto. ii. exploit PF; eauto. ss.
     - econs; eauto. ii. exploit PF; eauto. ss.
-    - destruct (L loc) eqn:LOC; eauto.
+    - destruct (L loc) eqn:LOC.
       + econs 3; eauto.
-      + econs 2; eauto. clarify.
-    - destruct (L loc) eqn:LOC; eauto.
+      + econs 2; eauto.
+    - destruct (L loc) eqn:LOC.
       + econs 1; eauto.
-      + econs 2; eauto. clarify.
+      + econs 2; eauto.
   }
   { i. unfold option_rel, language. des_ifs.
     destruct p as [[lang st] [tview prom]]. econs; eauto. econs; eauto.

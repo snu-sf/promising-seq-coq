@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,16 +13,16 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
 
-Require Import OrdStep.
+Require Import ldrfra.OrdStep.
 
 Set Implicit Arguments.
 
@@ -169,9 +169,9 @@ Module Writes.
       - inv STEP. eapply write_wf; eauto.
       - inv LOCAL1. inv STEP. inv LOCAL2. inv STEP. ss.
         eapply write_wf; eauto.
-      - inv STEP. revert ORD. condtac; ss.
-        { destruct ord, ordcw; ss. }
-        hexploit write_na_wf; eauto. rewrite COND. ss.
+      - inv STEP. revert ORD. condtac; ss;
+          try (destruct ord, ordcw; ss; fail);
+          try (hexploit write_na_wf; eauto; rewrite COND; ss; fail).
       - inv STEP. eapply write_wf; eauto.
     Qed.
 
@@ -260,16 +260,16 @@ Module Writes.
     (*   - exploit RELS; eauto. i. des. ss. *)
     (*   - exploit RELS; eauto. i. des. ss. *)
     (*   - inv LOCAL0. inv STEP. ss. revert IN. *)
-    (*     repeat condtac; ss; i; des; try by (exploit RELS; eauto; i; des; ss). *)
+    (*     repeat condtac; ss; i; des; try sfby (exploit RELS; eauto; i; des; ss). *)
     (*     inv IN. eapply write_disjoint; eauto. *)
     (*   - inv LOCAL1. inv STEP. inv LOCAL2. inv STEP. ss. revert IN. *)
-    (*     repeat condtac; ss; i; des; try by (exploit RELS; eauto; i; des; ss). *)
+    (*     repeat condtac; ss; i; des; try sfby (exploit RELS; eauto; i; des; ss). *)
     (*     inv IN. eapply write_disjoint; eauto. *)
     (*   - exploit RELS; eauto. i. des. ss. *)
     (*   - exploit RELS; eauto. i. des. ss. *)
     (*   - exploit RELS; eauto. i. des. ss. *)
     (*   - inv LOCAL0. inv STEP. ss. revert IN. *)
-    (*     repeat condtac; ss; i; des; try by (exploit RELS; eauto; i; des; ss). *)
+    (*     repeat condtac; ss; i; des; try sfby (exploit RELS; eauto; i; des; ss). *)
     (*     inv IN. eapply write_na_disjoint; eauto. *)
     (*   - exploit RELS; eauto. i. des. ss. *)
     (*   - exploit RELS; eauto. i. des. ss. *)

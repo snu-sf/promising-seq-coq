@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -10,45 +10,45 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import Cover.
-Require Import MemorySplit.
-Require Import MemoryMerge.
-Require Import FulfillStep.
-Require Import MemoryProps.
+Require Import prop.Cover.
+Require Import prop.MemorySplit.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
+Require Import prop.MemoryProps.
 
-Require Import LowerMemory.
-Require Import JoinedView.
+Require Import sequential.LowerMemory.
+Require Import prop.JoinedView.
 
-Require Import MaxView.
-Require Import Delayed.
+Require Import sequential.MaxView.
+Require Import sequential.Delayed.
 
-Require Import Lia.
+From Stdlib Require Import Lia.
 
-Require Import JoinedView.
-Require Import SeqLift.
-Require Import SeqLiftStep.
-Require Import SeqLiftCertification.
-Require Import SeqLiftInterference.
-Require Import DelayedSimulation.
-Require Import SequentialRefinement.
-Require Import Sequential.
+Require Import prop.JoinedView.
+Require Import sequential.SeqLift.
+Require Import sequential.SeqLiftStep.
+Require Import sequential.SeqLiftCertification.
+Require Import sequential.SeqLiftInterference.
+Require Import sequential.DelayedSimulation.
+Require Import sequential.SequentialRefinement.
+Require Import sequential.Sequential.
 
-Require Import Pred.
+Require Import prop.Pred.
 
-Require Import SimAux.
-Require Import FlagAux.
-Require Import SeqAux.
-Require Import NoMix.
+Require Import optimizer.SimAux.
+Require Import sequential.FlagAux.
+Require Import sequential.SeqAux.
+Require Import sequential.NoMix.
 
 Variant initial_finalized: Messages.t :=
   | initial_finalized_intro
@@ -65,7 +65,7 @@ Proof.
   extensionality from.
   extensionality to.
   extensionality msg.
-  apply Coq.Logic.PropExtensionality.propositional_extensionality.
+  apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
   split; i.
   { inv H. ss. unfold Memory.init, Memory.get in GET.
     rewrite Cell.init_get in GET. des_ifs. }
@@ -288,7 +288,7 @@ Proof.
   { ii. ss. erewrite Memory.bot_get in GETSRC. ss. }
 Qed.
 
-Require Import Program.
+From Stdlib Require Import Program.
 
 Module CertOracle.
   Definition t := Loc.t -> Const.t.
@@ -754,7 +754,7 @@ Section LIFT.
       { econs 1. }
       { ss. }
       { i. esplits; eauto.
-        { eapply sim_state_lift_cond_mon; eauto. ss. }
+        { eapply sim_state_lift_cond_mon; eauto. }
         { refl. }
       }
     }
@@ -783,7 +783,7 @@ Section LIFT.
       { refl. }
       { econs 5. red. destruct ordr, ordw; ss; auto. }
       { i. esplits; eauto.
-        { eapply sim_state_lift_cond_mon; eauto. ss. }
+        { eapply sim_state_lift_cond_mon; eauto. }
         { refl. }
       }
       { ss. }
@@ -792,7 +792,7 @@ Section LIFT.
       { refl. }
       { econs 4. }
       { i. esplits; eauto.
-        { eapply sim_state_lift_cond_mon; eauto. ss. }
+        { eapply sim_state_lift_cond_mon; eauto. }
         { refl. }
       }
       { ss. }
@@ -836,7 +836,7 @@ Section LIFT.
       { refl. }
       { econs 5. red. destruct ordr, ordw; ss; auto. }
       { i. esplits.
-        { eapply sim_state_lift_cond_mon; eauto. ss. }
+        { eapply sim_state_lift_cond_mon; eauto. }
         { refl. }
       }
       { ss. }
@@ -877,7 +877,7 @@ Section LIFT.
       { ss. }
       { ss. }
       { i. esplits; eauto.
-        { eapply sim_state_lift_cond_mon; eauto. ss. }
+        { eapply sim_state_lift_cond_mon; eauto. }
         { refl. }
       }
     }
@@ -1060,7 +1060,7 @@ Section LIFT.
       { econs 1. }
       { ss. }
       { esplits; eauto.
-        { eapply sim_state_lift_cond_mon; eauto. ss. }
+        { eapply sim_state_lift_cond_mon; eauto. }
         { refl. }
       }
     }
@@ -1096,7 +1096,7 @@ Section LIFT.
     induction STEPS; i; clarify.
     { esplits.
       { refl. }
-      { eapply sim_state_lift_cond_mon; eauto. ss. }
+      { eapply sim_state_lift_cond_mon; eauto. }
       { refl. }
       { auto. }
     }
@@ -1242,7 +1242,7 @@ Section LIFT.
       }
       { rewrite <- H1 in *.
         hexploit sim_thread_sol_read_na_racy; eauto.
-        { rewrite <- H2. ss. }
+        try (rewrite <- H2; ss; fail).
         i. des. esplits.
         { refl. }
         { eapply Local.step_racy_read; eauto. }
@@ -1281,7 +1281,7 @@ Section LIFT.
         }
       }
       { hexploit sim_thread_sol_write_na_racy; eauto.
-        { rewrite <- H2. ss. }
+        try (rewrite <- H2; ss; fail).
         i. des. esplits.
         { refl. }
         { eapply Local.step_racy_write; eauto. }
@@ -2254,7 +2254,7 @@ Section LIFT.
         specialize (FLAGS loc). inv FLAGS. econs; auto.
         etrans; [|eapply Flag.join_ge_l].
         destruct (flag_tgt0 loc) eqn:FLAGSRC, (flag_src0 loc) eqn:FLATGT; ss.
-        hexploit ACQFLAG; eauto. ss.
+        try (hexploit ACQFLAG; eauto; ss; fail).
       }
     }
   Qed.
@@ -3018,7 +3018,7 @@ Section LIFT.
       rewrite H1 in H0. rewrite SRC in H0. ss.
     }
     hexploit sim_thread_local_program_step_normal; eauto.
-    { ii. clarify. }
+    try (ii; clarify; fail).
     i. des.
     { esplits.
       { eauto. }
@@ -3030,7 +3030,7 @@ Section LIFT.
     { eapply lift_output_wf. }
     i. des. destruct mem_src, m2.
     hexploit sim_lift_event_step_normal; eauto.
-    { ii. clarify. }
+    try (ii; clarify; fail).
     i. des. ss. esplits.
     { etrans; eassumption. }
     right. eexists (_, _, _). esplits; auto.
@@ -3198,7 +3198,7 @@ Section LIFT.
     hexploit Thread.program_step_future; eauto. i. des; ss.
     inv STEP. punfold NOMIXTGT. exploit NOMIXTGT; eauto. i. des. pclearbot.
     hexploit sim_lift_tgt_na_local_step; eauto.
-    { ii. clarify. }
+    try (ii; clarify; fail).
     i. des.
     hexploit Thread.rtc_tau_step_future; eauto. i. des; ss.
     exploit SIM; eauto.
@@ -3313,7 +3313,7 @@ Section LIFT.
   Proof.
     assert (UPACO: upaco7 _sim_seq bot7 = sim_seq).
     { repeat (let x := fresh "x" in extensionality x).
-      apply Coq.Logic.PropExtensionality.propositional_extensionality.
+      apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
       split; auto. i. pclearbot. auto.
     }
     pcofix CIH. i. pfold. ii.

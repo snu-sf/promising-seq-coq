@@ -1,4 +1,4 @@
-From ITree Require Export ITree Subevent.
+From ITree Require Export ITree Core.Subevent.
 
 From ITree Require Export
      ITree
@@ -6,12 +6,12 @@ From ITree Require Export
      Events.MapDefault
      Events.State
      Events.StateFacts
-     EqAxiom
+     Eq.EqAxiom
 .
 From ExtLib Require Export
      Data.String
      Data.Map.FMapAList
-     Functor FunctorLaws
+     Structures.Functor Structures.FunctorLaws
      Structures.Maps
 .
 
@@ -27,8 +27,8 @@ Open Scope itree_scope.
 
 Set Implicit Arguments.
 
-Require Import RelationClasses.
-Require Import List.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import List.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -39,20 +39,20 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Axioms.
 
 From PromisingLib Require Import Event.
-Require Export ITreeLib.
-Require Export Program.
+Require Export itree.ITreeLib.
+From Stdlib Require Export Program.
 
-Require Import Sequential.
-Require Import SimAux.
+Require Import sequential.Sequential.
+Require Import optimizer.SimAux.
 
-Require Import IDCollect.
-Require Import Opt3.
-Require Import Opt3Sim.
+Require Import optimizer.IDCollect.
+Require Import optimizer.Opt3.
+Require Import optimizer.Opt3Sim.
 
-Require Import ITreeLangNotations.
-Require Import ITreeLangProof.
-Require Import ITreeLang.
-Require Import SequentialITree.
+Require Import itree.ITreeLangNotations.
+Require Import itree.ITreeLangProof.
+Require Import itree.ITreeLang.
+Require Import itree.SequentialITree.
 
 
 
@@ -516,7 +516,7 @@ End SIM.
 
 
 
-Require Import RRforwarding.
+Require Import optimizer.RRforwarding.
 
 Section Test.
 

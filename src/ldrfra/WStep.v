@@ -1,5 +1,5 @@
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -12,21 +12,21 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import Mapping.
+Require Import prop.Mapping.
 
-Require Import PFStep.
-Require Import OrdStep.
-Require Import Writes.
+Require Import ldrfpf.PFStep.
+Require Import ldrfra.OrdStep.
+Require Import ldrfra.Writes.
 
 Set Implicit Arguments.
 
@@ -988,20 +988,20 @@ Module WConfiguration.
     (*   inv STEP. inv STEP0; inv STEP; inv LOCAL; inv WRITE; ss. *)
     (*   - inv LOCAL0. inv STEP. inv WRITE. *)
     (*     exploit Memory.promise_disjoint; try eapply WF; try eapply DISJOINT2; eauto. i. des. *)
-    (*     exploit Memory.promise_get0; eauto; try by (inv PROMISE; ss). i. des. *)
+    (*     exploit Memory.promise_get0; eauto; try sfby (inv PROMISE; ss). i. des. *)
     (*     destruct (Memory.get loc to (Local.promises lc)) as [[]|] eqn:GETP; ss. *)
     (*     exfalso. *)
-    (*     exploit MemoryFacts.promise_time_lt; eauto; try by (inv PROMISE; ss). i. *)
+    (*     exploit MemoryFacts.promise_time_lt; eauto; try sfby (inv PROMISE; ss). i. *)
     (*     inv DISJOINT0. hexploit DISJOINT1; eauto. i. des. *)
     (*     exploit Memory.get_ts; try exact GETP. i. des. *)
     (*     { subst. ss. } *)
     (*     apply (H0 to); econs; ss; refl. *)
     (*   - inv LOCAL1. inv STEP. inv LOCAL2. inv STEP. inv WRITE. *)
     (*     exploit Memory.promise_disjoint; try eapply WF; try eapply DISJOINT2; eauto. i. des. *)
-    (*     exploit Memory.promise_get0; eauto; try by (inv PROMISE; ss). i. des. *)
+    (*     exploit Memory.promise_get0; eauto; try sfby (inv PROMISE; ss). i. des. *)
     (*     destruct (Memory.get loc to (Local.promises lc)) as [[]|] eqn:GETP; ss. *)
     (*     exfalso. *)
-    (*     exploit MemoryFacts.promise_time_lt; eauto; try by (inv PROMISE; ss). i. *)
+    (*     exploit MemoryFacts.promise_time_lt; eauto; try sfby (inv PROMISE; ss). i. *)
     (*     inv DISJOINT0. hexploit DISJOINT1; eauto. i. des. *)
     (*     exploit Memory.get_ts; try exact GETP. i. des. *)
     (*     { subst. ss. } *)
@@ -1069,11 +1069,11 @@ Module WConfiguration.
     (*   inv STEP. inv STEP0; inv STEP; inv LOCAL; ss. *)
     (*   - inv LOCAL0. inv STEP. inv WRITE0. *)
     (*     exploit WThread.promise_writes_wf; eauto. i. des. *)
-    (*     exploit Memory.promise_get0; eauto; try by (inv PROMISE; ss). i. des. *)
+    (*     exploit Memory.promise_get0; eauto; try sfby (inv PROMISE; ss). i. des. *)
     (*     congr. *)
     (*   - inv LOCAL1. inv STEP. inv LOCAL2. inv STEP. inv WRITE0. ss. *)
     (*     exploit WThread.promise_writes_wf; eauto. i. des. *)
-    (*     exploit Memory.promise_get0; eauto; try by (inv PROMISE; ss). i. des. *)
+    (*     exploit Memory.promise_get0; eauto; try sfby (inv PROMISE; ss). i. des. *)
     (*     congr. *)
     (* Qed. *)
 

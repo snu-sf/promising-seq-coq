@@ -8,10 +8,10 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
 
 Set Implicit Arguments.
 

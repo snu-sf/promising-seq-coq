@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From Paco Require Import paco.
 From sflib Require Import sflib.
@@ -7,7 +7,7 @@ From PromisingLib Require Import Axioms.
 From PromisingLib Require Import Basic.
 From PromisingLib Require Import Loc.
 
-Require Import Time.
+Require Import lang.Time.
 
 
 
@@ -54,7 +54,7 @@ Lemma incr_time_seq_lt n0 n1
   :
     Time.lt (incr_time_seq n0) (incr_time_seq n1).
 Proof.
-  set (incr_time_seq_lt' n0 n1 LT). inv l; try by econs.
+  set (incr_time_seq_lt' n0 n1 LT). inv l; try sfby econs.
   destruct n0; ss.
 Qed.
 
@@ -63,7 +63,7 @@ Lemma incr_time_seq_diverge ts
     exists n, <<LT: Time.lt ts (incr_time_seq n)>>.
 Proof.
   set (incr_time_seq_diverge' ts). des.
-  exists n. inv LT; try by econs.
+  exists n. inv LT; try sfby econs.
   destruct n; ss.
 Qed.
 
@@ -244,7 +244,7 @@ Proof.
     exfalso. eapply Time.lt_strorder. eapply TimeFacts.le_lt_lt.
     { eapply LB. eapply SAT. } eapply TimeFacts.lt_le_lt.
     { eapply LT. }
-    { eapply Lt.le_lt_or_eq in l. des.
+    { eapply PeanoNat.Nat.le_lteq in l. des.
       { left. eapply MON; eauto. }
       { subst. refl. }
     }
@@ -266,7 +266,7 @@ Proof.
     { eapply LB. eapply SAT1. } eapply TimeFacts.lt_le_lt.
     { eapply l. } etrans.
     { left. eapply LT. }
-    { eapply Lt.le_lt_or_eq in l0. des.
+    { eapply PeanoNat.Nat.le_lteq in l0. des.
       { left. eapply MON; eauto. }
       { subst. refl. }
     }

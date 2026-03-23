@@ -1,6 +1,6 @@
-Require Import Bool.
-Require Import RelationClasses.
-Require Import Program.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import Program.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,15 +13,15 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
-Require Import List.
+From Stdlib Require Import List.
 
-Require Import SeqLib.
-Require Import Sequential.
-Require Import OracleFacts.
+Require Import sequential.SeqLib.
+Require Import sequential.Sequential.
+Require Import sequential.OracleFacts.
 
-Require Import SimAux.
-Require Import SeqAux.
-Require Import SequentialBehavior.
+Require Import optimizer.SimAux.
+Require Import sequential.SeqAux.
+Require Import sequential.SequentialBehavior.
 
 Set Implicit Arguments.
 
@@ -146,7 +146,7 @@ Section ADEQUACY.
        end).
     split.
     { split; i; des_ifs; des; ss; eauto. inv H. ss. }
-    { des_ifs; destruct o; try by intuition.
+    { des_ifs; destruct o; try sfby intuition.
       - esplits. econs; eauto. econs.
       - esplits. econs.
     }
@@ -162,7 +162,7 @@ Section ADEQUACY.
     exists (if is_acquire e then Some m1.(SeqMemory.flags) else None).
     split.
     { split; i; des_ifs; des; ss; eauto. }
-    { des_ifs; destruct o as [[]|]; try by intuition.
+    { des_ifs; destruct o as [[]|]; try sfby intuition.
       - esplits. econs; eauto. econs.
       - esplits. econs.
     }
@@ -178,7 +178,7 @@ Section ADEQUACY.
     exists (if is_release e then Some (m1.(SeqMemory.value_map), m1.(SeqMemory.flags)) else None).
     split.
     { split; i; des_ifs; des; ss; eauto. }
-    { des_ifs; destruct o; try by intuition.
+    { des_ifs; destruct o; try sfby intuition.
       - esplits. econs; eauto. econs.
       - esplits. econs.
     }
@@ -253,7 +253,7 @@ Section ADEQUACY.
       + specialize (DEFERRED0 loc). unfold Flags.join in *.
         destruct (f_tgt loc), (d1 loc), (f_src loc), (d loc); ss.
       + specialize (VAL0 loc). destruct (d loc); ss.
-        exploit VAL0; eauto. i. congr.
+        exploit VAL0; eauto.
   Qed.
 
   Lemma min_match_le_min
@@ -353,8 +353,8 @@ Section ADEQUACY.
     inv FOLLOWS. econs; i.
     - exploit SOUND; try exact STEP. intros x. des. split.
       + destruct e_src, e_tgt; ss; inv EVENT; des; subst; ss.
-      + i. exploit x0; try by (etrans; eauto). i. des. splits; auto.
-    - eapply COMPLETE; eauto; try by etrans; eauto.
+      + i. exploit x0; try sfby (etrans; eauto). i. des. splits; auto.
+    - eapply COMPLETE; eauto; try sfby etrans; eauto.
       destruct e_src, e_tgt; ss; inv EVENT; des; subst; ss.
   Qed.
 
@@ -946,7 +946,7 @@ Section ADEQUACY.
     - inv STEP0. exploit state_step_subset; eauto. intros x. inv x.
       punfold DETERM. inv DETERM.
       exploit STEP_STEP; [exact LANG|exact LANG0|]. i. des.
-      exploit similar_is_atomic; eauto; try by (i; subst; eapply NO_NA_UPDATE; eauto). i.
+      exploit similar_is_atomic; eauto; try sfby (i; subst; eapply NO_NA_UPDATE; eauto). i.
       rewrite x2 in *.
       exploit na_local_step_na_event; eauto. ss.
   Qed.
@@ -982,7 +982,7 @@ Section ADEQUACY.
     - inv STEP0. exploit state_step_subset; eauto. intros x. inv x.
       punfold DETERM. inv DETERM.
       exploit STEP_STEP; [exact LANG|exact LANG0|]. i. des.
-      exploit similar_is_atomic; eauto; try by (i; subst; eapply NO_NA_UPDATE; eauto). i.
+      exploit similar_is_atomic; eauto; try sfby (i; subst; eapply NO_NA_UPDATE; eauto). i.
       rewrite x2 in *.
       exploit na_local_step_na_event; eauto. ss.
   Qed.
@@ -1168,7 +1168,7 @@ Section ADEQUACY.
     { inv STEP. exploit state_step_subset; eauto. intros x. inv x. ss.
       exploit deterministic_step; [|exact LSTEP|exact LANG|]; ss. i. des.
       punfold DETERM. inv DETERM.
-      exploit similar_is_atomic; eauto; try by (i; subst; eapply NO_NA_UPDATE; eauto). i.
+      exploit similar_is_atomic; eauto; try sfby (i; subst; eapply NO_NA_UPDATE; eauto). i.
       rewrite x2 in *.
       exploit na_local_step_na_event; eauto; ss.
     }
@@ -1198,7 +1198,7 @@ Section ADEQUACY.
     { inv STEP. exploit state_step_subset; eauto. intros x0. inv x0.
       punfold DETERM. inv DETERM.
       exploit STEP_STEP; [exact LSTEP|exact LANG|]. i. des.
-      exploit similar_is_atomic; eauto; try by (i; subst; eapply NO_NA_UPDATE; eauto). i.
+      exploit similar_is_atomic; eauto; try sfby (i; subst; eapply NO_NA_UPDATE; eauto). i.
       rewrite x3 in *. inv LOCAL; ss; try destruct ord; ss.
     }
     inv STEP. ss.
@@ -1310,13 +1310,13 @@ Section ADEQUACY.
         exploit state_step_subset; eauto. intros x. inv x.
         punfold x1. inv x1.
         exploit STEP_STEP; [exact LSTEP|exact LANG|]. intros x. des.
-        exploit similar_is_atomic; try exact x; try by (i; subst; eapply NO_NA_UPDATE; eauto). intros x2.
+        exploit similar_is_atomic; try exact x; try sfby (i; subst; eapply NO_NA_UPDATE; eauto). intros x2.
         rewrite x2 in *.
         exploit na_local_step_na_event; eauto. ss.
       - inv STEP. exploit state_step_subset; eauto. intros x. inv x.
         punfold x1. inv x1.
         exploit STEP_STEP; [exact LSTEP|exact LANG|]. intros x. des.
-        exploit similar_is_atomic; try exact x; try by (i; subst; eapply NO_NA_UPDATE; eauto). intros x2.
+        exploit similar_is_atomic; try exact x; try sfby (i; subst; eapply NO_NA_UPDATE; eauto). intros x2.
         rewrite x2 in *.
         exploit na_local_step_na_event; eauto. ss.
     }
@@ -1443,7 +1443,7 @@ Section ADEQUACY.
         (STEPS: SeqThread.steps step1 tr th1 th2):
     SeqThread.steps step2 tr th1 th2.
   Proof.
-    induction STEPS; try by econs 1.
+    induction STEPS; try sfby econs 1.
     { econs 2; eauto. inv STEP. econs. eauto. }
     { econs 3; eauto. }
   Qed.
@@ -1467,7 +1467,7 @@ Section ADEQUACY.
         (STEPS: rtc (step p MachineEvent.silent) st1 st2):
     SeqThread.steps step [] (SeqThread.mk st1 p orc) (SeqThread.mk st2 p orc).
   Proof.
-    induction STEPS; try by econs.
+    induction STEPS; try sfby econs.
     econs 2; eauto. econs. ss.
   Qed.
 
@@ -1500,7 +1500,7 @@ Section ADEQUACY.
       inv x0. exploit deterministic_step; [|exact LSTEP|exact LANG|]; ss. i. des.
       punfold DETERM. inv DETERM.
       rewrite similar_is_atomic in ATOMIC; eauto;
-        try by (i; subst; eapply NO_NA_UPDATE; eauto).
+        try sfby (i; subst; eapply NO_NA_UPDATE; eauto).
       inv LOCAL; ss; try destruct ord; ss.
     }
     inv BEH; ss.
@@ -1513,7 +1513,7 @@ Section ADEQUACY.
       inv x. exploit deterministic_step; [|exact LANG|exact LANG0|]; ss. i. des.
       punfold DETERM. inv DETERM.
       rewrite similar_is_atomic in ATOMIC0; eauto;
-        try by (i; subst; eapply NO_NA_UPDATE; eauto).
+        try sfby (i; subst; eapply NO_NA_UPDATE; eauto).
       inv LOCAL; ss; try destruct ord; ss.
     }
   Qed.
@@ -1648,7 +1648,7 @@ Section ADEQUACY.
     { (* na step *)
       ii. destruct e.
       { (* silent *)
-        esplits; eauto; try by econs 2.
+        esplits; eauto; try sfby econs 2.
         right. eapply CIH; eauto. etrans; eauto.
       }
       { (* syscall *)
@@ -1910,7 +1910,7 @@ Section ADEQUACY.
           - clear ACCESS ACQUIRE H H1 H0 H5 H4 H8 H7 H11.
             exploit le_is_release; try exact EVENT. i.
             rewrite <- H12 in x0. rewrite <- H9 in x0.
-            destruct in_release, in_release0; try by intuition.
+            destruct in_release, in_release0; try sfby intuition.
             + destruct p, p0. econs; ss.
               rewrite Flags.join_top_r. apply Flags.top_spec.
             + econs. apply Flags.top_spec.
@@ -2235,7 +2235,7 @@ Section ADEQUACY.
     :
       sim_seq_all (fun _ _ => True) st_src st_tgt.
   Proof.
-    ii. eapply refinement_implies_simulation_aux; eauto; try by econs 1.
+    ii. eapply refinement_implies_simulation_aux; eauto; try sfby econs 1.
     ii. exploit REFINE; eauto. i. des. eauto.
   Qed.
 End ADEQUACY.

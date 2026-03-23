@@ -9,14 +9,14 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
 
 Set Implicit Arguments.
 
@@ -66,9 +66,9 @@ Proof.
   - econs; eauto; try congr.
     + econs. unfold TView.write_released.
       viewtac; repeat (condtac; viewtac);
-        (try by apply Time.bot_spec);
-        (try by unfold TimeMap.singleton, LocFun.add; condtac; [refl|congr]);
-        (try by left; eapply TimeFacts.le_lt_lt; [|eauto];
+        (try sfby apply Time.bot_spec);
+        (try sfby unfold TimeMap.singleton, LocFun.add; condtac; [refl|congr]);
+        (try sfby left; eapply TimeFacts.le_lt_lt; [|eauto];
          eapply closed_timemap_max_ts; apply WF1).
       left. eapply TimeFacts.le_lt_lt; [|eauto].
       eapply closed_timemap_max_ts. apply Memory.unwrap_closed_opt_view; viewtac.
@@ -192,7 +192,7 @@ Proof.
     apply Time.middle_spec. ss.
   - econs; eauto. econs; eauto; ss.
     econs. unfold TView.write_released. ss.
-    condtac; ss; try by unfold TimeMap.bot; apply Time.bot_spec.
+    condtac; ss; try sfby unfold TimeMap.bot; apply Time.bot_spec.
     unfold LocFun.add. condtac; ss.
     unfold TimeMap.join. condtac; ss.
     + unfold TimeMap.join, TimeMap.singleton.

@@ -7,22 +7,22 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
 
-Require Import LowerPromises.
+Require Import prop.LowerPromises.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
-Require Import SimThread.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
+Require Import transformation.SimThread.
 
 Set Implicit Arguments.
 
@@ -39,7 +39,7 @@ Lemma read_step_cur_future
 Proof.
   destruct lc1 as [tview1 promises1]. inv READ. ss.
   esplits; eauto.
-  - condtac; ss; try by destruct ord.
+  - condtac; ss; try sfby destruct ord.
     apply TimeMap.antisym.
     + etrans; [|apply TimeMap.join_l]. apply TimeMap.join_l.
     + apply TimeMap.join_spec; auto using TimeMap.bot_spec.
@@ -51,7 +51,7 @@ Proof.
       * ii. unfold TimeMap.singleton, LocFun.add, LocFun.init, LocFun.find.
         condtac; try apply Time.bot_spec.
         subst. refl.
-  - i. condtac; ss; try by destruct ord.
+  - i. condtac; ss; try sfby destruct ord.
     unfold TimeMap.join, TimeMap.bot.
     rewrite TimeFacts.le_join_l; try apply Time.bot_spec.
     rewrite TimeFacts.le_join_l; ss.
@@ -69,8 +69,8 @@ Lemma fence_step_future
   <<TVIEW: (TView.cur (Local.tview lc1)) = (TView.cur (Local.tview lc2))>>.
 Proof.
   destruct lc1 as [tview1 promises1]. inv FENCE. split; ss.
-  condtac; try by destruct ordw.
-  condtac; try by destruct ordr.
+  condtac; try sfby destruct ordw.
+  condtac; try sfby destruct ordr.
 Qed.
 
 Lemma write_step_consistent
@@ -115,7 +115,7 @@ Proof.
         apply Time.middle_spec. ss.
     - revert PROMISE.
       erewrite Memory.remove_o; eauto. condtac; ss.
-      erewrite Memory.split_o; eauto. repeat condtac; ss; try by des; ss.
+      erewrite Memory.split_o; eauto. repeat condtac; ss; try sfby des; ss.
       guardH o. guardH o0. guardH o1. i.
       apply TimeFacts.join_spec_lt; eauto.
       destruct (TimeFacts.le_lt_dec ts0 Time.bot); ss.

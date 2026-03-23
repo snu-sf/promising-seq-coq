@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import RelationClasses.
-Require Import Program.
+From Stdlib Require Import Lia.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import Program.
 
 From Paco Require Import paco.
 From sflib Require Import sflib.
@@ -11,23 +11,23 @@ From PromisingLib Require Import DataStructure.
 From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
 
-Require Import Time.
+Require Import lang.Time.
 From PromisingLib Require Import Event.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Behavior.
-Require Import Progress.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Behavior.
+Require Import lang.Progress.
 
-Require Import PromiseConsistent.
-Require Import MemoryMerge.
-Require Import Cover.
-Require Import Pred.
-Require Import Trace.
+Require Import prop.PromiseConsistent.
+Require Import prop.MemoryMerge.
+Require Import prop.Cover.
+Require Import prop.Pred.
+Require Import prop.Trace.
 
 Set Implicit Arguments.
 
@@ -3276,7 +3276,7 @@ Section PROMISEWRITING.
     :
       promise_writing_event loc from to msg e.
   Proof.
-    inv WRITING; try by (econs; eauto; etrans; eauto).
+    inv WRITING; try sfby (econs; eauto; etrans; eauto).
   Qed.
 
   Lemma promise_promise_decrease prom0 mem0 prom1 mem1
@@ -3293,14 +3293,14 @@ Section PROMISEWRITING.
   Proof.
     inv PROMISE.
     { eapply Memory.add_get1 in GET; eauto.
-      exists msg, from. splits; auto; try by refl. }
+      exists msg, from. splits; auto; try sfby refl. }
     { eapply Memory.split_get1 in GET; eauto. des.
-      exists msg, f'. splits; auto; try by refl. }
+      exists msg, f'. splits; auto; try sfby refl. }
     { eapply Memory.lower_get1 in GET; eauto. des.
-      exists m', from. splits; auto; try by refl. }
+      exists m', from. splits; auto; try sfby refl. }
     { dup GET. eapply Memory.remove_get1 in GET; eauto. des.
       { subst. eapply Memory.remove_get0 in PROMISES. des. clarify. }
-      { exists msg, from. splits; auto; try by refl. }
+      { exists msg, from. splits; auto; try sfby refl. }
     }
   Qed.
 
@@ -3382,7 +3382,7 @@ Section PROMISEWRITING.
     { left. inv STEP0; ss. inv LOCAL.
       eapply promise_promise_decrease in GET; eauto. }
     { inv STEP0; ss.
-      inv LOCAL; try by (inv LOCAL0; left; exists msg, from; splits; auto; refl).
+      inv LOCAL; try sfby (inv LOCAL0; left; exists msg, from; splits; auto; refl).
       { left; exists msg, from; splits; auto; refl. }
       { inv LOCAL0. ss.
         hexploit write_promise_decrease; eauto. i. des.
@@ -3554,7 +3554,7 @@ Section PROMISED.
       else promised mem1 loc'.
   Proof.
     extensionality loc'. extensionality ts'.
-    apply Coq.Logic.PropExtensionality.propositional_extensionality.
+    apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
     split; i.
     - inv H. destruct msg0. erewrite Memory.add_o in GET; eauto.
       des_ifs.
@@ -3582,10 +3582,10 @@ Section PROMISED.
         else concrete_promised mem1 loc'.
   Proof.
     extensionality loc'. extensionality ts'.
-    apply Coq.Logic.PropExtensionality.propositional_extensionality.
+    apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
     split; i.
     - inv H. erewrite Memory.add_o in GET; eauto.
-      des_ifs; ss; try by (des; clarify).
+      des_ifs; ss; try sfby (des; clarify).
       + econs; eauto.
       + econs; eauto.
     - des_ifs.
@@ -3602,7 +3602,7 @@ Section PROMISED.
       promised mem2 = promised mem1.
   Proof.
     extensionality loc'. extensionality ts'.
-    apply Coq.Logic.PropExtensionality.propositional_extensionality.
+    apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
     split; i.
     - inv H. destruct msg. erewrite Memory.lower_o in GET; eauto. des_ifs.
       + ss. des; clarify. econs. eapply (Memory.lower_get0 LOWER); eauto.
@@ -3617,7 +3617,7 @@ Section PROMISED.
       concrete_promised mem2 = concrete_promised mem1.
   Proof.
     extensionality loc'. extensionality ts'.
-    apply Coq.Logic.PropExtensionality.propositional_extensionality.
+    apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
     split; i.
     - inv H. erewrite Memory.lower_o in GET; eauto. des_ifs.
       + ss. des; clarify.
@@ -3638,10 +3638,10 @@ Section PROMISED.
         else promised mem1 loc'.
   Proof.
     extensionality loc'. extensionality ts'.
-    apply Coq.Logic.PropExtensionality.propositional_extensionality.
+    apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
     split; i.
     - inv H. destruct msg. erewrite Memory.split_o in GET; eauto.
-      des_ifs; try by (des; ss; clarify).
+      des_ifs; try sfby (des; ss; clarify).
       + ss. des; clarify. econs. eapply (Memory.split_get0 SPLIT); eauto.
       + econs; eauto.
       + econs; eauto.
@@ -3665,10 +3665,10 @@ Section PROMISED.
         else concrete_promised mem1 loc'.
   Proof.
     extensionality loc'. extensionality ts'.
-    apply Coq.Logic.PropExtensionality.propositional_extensionality.
+    apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
     split; i.
     - inv H. erewrite Memory.split_o in GET; eauto.
-      des_ifs; try by (des; ss; clarify).
+      des_ifs; try sfby (des; ss; clarify).
       + ss. des; clarify. econs; eauto. eapply (Memory.split_get0 SPLIT); eauto.
       + econs; eauto.
       + econs; eauto.
@@ -3690,10 +3690,10 @@ Section PROMISED.
         else promised mem1 loc'.
   Proof.
     extensionality loc'. extensionality ts'.
-    apply Coq.Logic.PropExtensionality.propositional_extensionality.
+    apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
     split; i.
     - inv H. destruct msg0. erewrite Memory.remove_o in GET; eauto.
-      des_ifs; try by (des; ss; clarify).
+      des_ifs; try sfby (des; ss; clarify).
       + econs; eauto.
       + econs; eauto.
     - des_ifs.
@@ -3709,10 +3709,10 @@ Section PROMISED.
       concrete_promised mem2 = concrete_promised mem1.
   Proof.
     extensionality loc'. extensionality ts'.
-    apply Coq.Logic.PropExtensionality.propositional_extensionality.
+    apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
     split; i.
     - inv H. erewrite Memory.remove_o in GET; eauto.
-      des_ifs; try by (des; ss; clarify). econs; eauto.
+      des_ifs; try sfby (des; ss; clarify). econs; eauto.
     - inv H. dup GET. eapply Memory.remove_get1 in GET; eauto. des.
       + clarify. eapply Memory.remove_get0 in REMOVE. des. clarify.
       + econs; eauto.
@@ -4569,7 +4569,7 @@ Section FINALIZED.
       fin \4/ committed mem prom mem prom = fin.
   Proof.
     extensionality loc. extensionality to. extensionality from. extensionality msg.
-    eapply Coq.Logic.PropExtensionality.propositional_extensionality.
+    eapply Stdlib.Logic.PropExtensionality.propositional_extensionality.
     split; auto. i. des; auto.
     exfalso. inv H. ss.
   Qed.
@@ -4586,7 +4586,7 @@ Section FINALIZED.
                (Thread.memory e3) (Local.promises (Thread.local e3))).
   Proof.
     extensionality loc. extensionality to. extensionality from. extensionality msg.
-    eapply Coq.Logic.PropExtensionality.propositional_extensionality.
+    eapply Stdlib.Logic.PropExtensionality.propositional_extensionality.
     split; i; des.
     { inv H.
       destruct (classic (unchangable (Thread.memory e2) (Local.promises (Thread.local e2))

@@ -1,7 +1,7 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
-Require Import Program.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import Program.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -14,25 +14,25 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Behavior.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Behavior.
 
-Require Import Single.
-Require Import JoinedView.
+Require Import prop.Single.
+Require Import prop.JoinedView.
 
-Require Import LocalDRFPFView.
+Require Import ldrfpf.LocalDRFPFView.
 
-Require Import OrdStep.
-Require Import Writes.
-Require Import WStep.
-Require Import PFtoRA.
+Require Import ldrfra.OrdStep.
+Require Import ldrfra.Writes.
+Require Import ldrfra.WStep.
+Require Import ldrfra.PFtoRA.
 
 Set Implicit Arguments.
 
@@ -97,13 +97,13 @@ Section RARACE.
         (HIGHER: Time.lt ((Local.tview (Thread.local e2)).(TView.cur).(View.rlx) loc) to):
     (<<RELS1: List.In (loc, to, ordw) rels1>>).
   Proof.
-    dependent induction STEPS; try by (esplits; eauto).
+    dependent induction STEPS; try sfby (esplits; eauto).
     hexploit WThread.step_reserve_only; try exact STEP; eauto. i. des.
     exploit WThread.step_future; eauto. i. des.
     exploit WThread.steps_future; try exact STEPS; eauto. i. des.
     exploit IHSTEPS; eauto. intros x. des.
     clear IHSTEPS. revert x.
-    inv STEP. inv STEP0; inv STEP; [|inv LOCAL]; ss; try by (esplits; eauto).
+    inv STEP. inv STEP0; inv STEP; [|inv LOCAL]; ss; try sfby (esplits; eauto).
     - unfold Writes.append. ss. condtac; ss. i. des; ss. inv x.
       assert (Time.le to ((TView.cur (Local.tview lc2)).(View.rlx) loc)).
       { inv LOCAL0. inv STEP. ss.

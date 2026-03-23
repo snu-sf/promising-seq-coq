@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From Paco Require Import paco.
 From sflib Require Import sflib.
@@ -8,23 +8,23 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import DataStructure.
 From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
-Require Import Time.
+Require Import lang.Time.
 From PromisingLib Require Import Event.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
-Require Import Behavior.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
+Require Import lang.Behavior.
 
-Require Import Pred.
-Require Import Trace.
-Require Import OrderedTimes.
-Require Import PFConsistentStrong.
+Require Import prop.Pred.
+Require Import prop.Trace.
+Require Import prop.OrderedTimes.
+Require Import prop.PFConsistentStrong.
 
 Set Implicit Arguments.
 

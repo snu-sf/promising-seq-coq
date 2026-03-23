@@ -5,28 +5,28 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
 
-Require Import MemoryReorder.
-Require Import MemorySplit.
-Require Import MemoryMerge.
-Require Import FulfillStep.
+Require Import prop.MemoryReorder.
+Require Import prop.MemorySplit.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
-Require Import SimThread.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
+Require Import transformation.SimThread.
 
-Require Import MergeTView.
+Require Import transformation.MergeTView.
 
 Set Implicit Arguments.
 
@@ -73,13 +73,13 @@ Proof.
   inv STEP. econs; eauto.
   - inv WRITE.
     hexploit Memory.promise_op; eauto. i.
-    hexploit TViewFacts.write_future; try exact H; eauto; try apply WF0; try by viewtac. i. des.
-    hexploit Memory.promise_future; try apply PROMISE; try apply WF0; eauto; try by viewtac. i. des.
+    hexploit TViewFacts.write_future; try exact H; eauto; try apply WF0; try sfby viewtac. i. des.
+    hexploit Memory.promise_future; try apply PROMISE; try apply WF0; eauto; try sfby viewtac. i. des.
     eapply Memory.promise_get2; eauto.
     inv PROMISE; ss.
   - refl.
   - inv WRITABLE. unfold TView.write_released. s.
-    econs; repeat (try condtac; aggrtac); (try by left; eauto).
+    econs; repeat (try condtac; aggrtac); (try sfby left; eauto).
     + etrans; [|left; eauto]. apply WF0.
   - unfold TView.read_tview, TView.write_released, TView.write_tview. s.
     f_equal. apply TView.antisym; econs;
@@ -210,7 +210,7 @@ Lemma merge_split
 Proof.
   set (released1' := TView.write_released (Local.tview lc0) sc0 loc ts2 released0 ord).
   assert (REL1'_WF: View.opt_wf released1').
-  { unfold released1', TView.write_released. condtac; econs. repeat (try condtac; aggrtac; try by apply WF0). }
+  { unfold released1', TView.write_released. condtac; econs. repeat (try condtac; aggrtac; try sfby apply WF0). }
   exploit fulfill_step_future; eauto. i. des.
   inv STEP.
   exploit MemorySplit.remove_promise_promise_remove_remove;
@@ -228,7 +228,7 @@ Proof.
   { unfold released1'. eapply TViewFacts.op_closed_released; eauto; try apply WF0.
     eapply Memory.promise_op. eauto.
   }
-  exploit Memory.promise_future; try eexact STEP1; (try by apply WF0); (try by viewtac); eauto. i. des.
+  exploit Memory.promise_future; try eexact STEP1; (try sfby apply WF0); (try sfby viewtac); eauto. i. des.
   esplits.
   - econs; eauto.
   - econs; try exact STEP2; auto.
@@ -244,7 +244,7 @@ Proof.
   - unfold Local.tview at 1.
     econs; try exact STEP3; auto.
     + etrans; eauto. unfold released1', TView.write_released. s. condtac; econs.
-      repeat (try condtac; aggrtac; try by apply WF0).
+      repeat (try condtac; aggrtac; try sfby apply WF0).
     + s. inv WRITABLE. econs; repeat (try condtac; aggrtac; eauto).
   - s. econs; ss.
     + eapply MergeTView.write_write_tview; eauto. apply WF0.
@@ -280,14 +280,14 @@ Proof.
   exploit Local.write_step_future; eauto. i. des.
   exploit write_promise_fulfill; eauto. i. des.
   exploit Local.promise_step_future; eauto. i. des.
-  exploit merge_split; try exact STEP2; eauto; try by viewtac.
+  exploit merge_split; try exact STEP2; eauto; try sfby viewtac.
   { eapply fulfill_step_lc_from; eauto. }
   i. des.
   exploit Local.promise_step_future; try exact STEP0; eauto. i. des.
-  exploit promise_fulfill_write_sim_memory; try eexact STEP3; eauto; try by viewtac.
+  exploit promise_fulfill_write_sim_memory; try eexact STEP3; eauto; try sfby viewtac.
   { i. destruct ord; inv ORD; inv H. }
   i. des.
-  exploit Local.write_step_future; eauto; try by viewtac. i. des.
+  exploit Local.write_step_future; eauto; try sfby viewtac. i. des.
   exploit sim_local_fulfill_bot; try eexact STEP4; try exact REL_LE; try refl; eauto.
   { inv MSG_WF0. eauto. }
   i. des.
@@ -393,7 +393,7 @@ Lemma reorder_promise_add_fulfill
     <<STEP2: Local.promise_step lc1' mem0 loc1 from1 to1 msg1 lc2 mem1 Memory.op_kind_add>>.
 Proof.
   exploit Local.promise_step_future; try exact STEP1; eauto. i. des.
-  exploit fulfill_step_future; try exact STEP2; try exact WF2; eauto; try by viewtac. i. des.
+  exploit fulfill_step_future; try exact STEP2; try exact WF2; eauto; try sfby viewtac. i. des.
   inv STEP1. inv STEP2.
   exploit MemoryReorder.promise_add_remove; try exact PROMISE; eauto. i. des.
   esplits.
@@ -421,7 +421,7 @@ Lemma reorder_promise_split_fulfill
     <<STEP2: Local.promise_step lc1' mem0 loc1 from1 to1 msg1 lc2 mem1 (Memory.op_kind_split to3 msg3)>>.
 Proof.
   exploit Local.promise_step_future; try exact STEP1; eauto. i. des.
-  exploit fulfill_step_future; try exact STEP2; try exact WF2; eauto; try by viewtac. i. des.
+  exploit fulfill_step_future; try exact STEP2; try exact WF2; eauto; try sfby viewtac. i. des.
   inv STEP1. inv STEP2.
   exploit MemoryReorder.promise_split_remove; try exact PROMISE; eauto. i. des.
   esplits.
@@ -447,7 +447,7 @@ Lemma reorder_promise_lower_fulfill
     <<STEP2: Local.promise_step lc1' mem0 loc1 from1 to1 msg2 lc2 mem1 (Memory.op_kind_lower msg1)>>.
 Proof.
   exploit Local.promise_step_future; try exact STEP1; eauto. i. des.
-  exploit fulfill_step_future; try exact STEP2; try exact WF2; eauto; try by viewtac. i. des.
+  exploit fulfill_step_future; try exact STEP2; try exact WF2; eauto; try sfby viewtac. i. des.
   inv STEP1. inv STEP2.
   exploit MemoryReorder.promise_lower_remove; try exact PROMISE; eauto. i. des.
   esplits.
@@ -496,7 +496,7 @@ Proof.
   exploit Local.write_step_future; eauto. i. des.
   exploit write_promise_fulfill; eauto. i. des.
   exploit Local.promise_step_future; eauto. i. des.
-  exploit merge_split; try exact STEP2; eauto; try by viewtac.
+  exploit merge_split; try exact STEP2; eauto; try sfby viewtac.
   { eapply fulfill_step_lc_from; eauto. }
   i. des.
   exploit promise_add_promise_split_promise_add_promise_add; try exact STEP1; try exact STEP0; eauto.
@@ -508,10 +508,10 @@ Proof.
   }
   i. des.
   exploit Local.promise_step_future; try eexact STEP5; eauto. i. des.
-  exploit reorder_promise_add_fulfill; try exact STEP6; try eexact STEP3; eauto; try by viewtac.
+  exploit reorder_promise_add_fulfill; try exact STEP6; try eexact STEP3; eauto; try sfby viewtac.
   { ii. inv H. exfalso. eapply Time.lt_strorder. eauto. }
   i. des.
-  exploit fulfill_step_future; try eexact STEP7; try exact WF3; eauto; try by viewtac. i. des.
+  exploit fulfill_step_future; try eexact STEP7; try exact WF3; eauto; try sfby viewtac. i. des.
   exploit promise_fulfill_write_sim_memory; try eexact STEP5; eauto. i. des.
   exploit Local.write_step_future; eauto. i. des.
   exploit promise_fulfill_write_sim_memory; try eexact STEP8; eauto.
@@ -554,7 +554,7 @@ Proof.
   exploit Local.write_step_future; eauto. i. des.
   exploit write_promise_fulfill; eauto. i. des.
   exploit Local.promise_step_future; eauto. i. des.
-  exploit merge_split; try exact STEP2; eauto; try by viewtac.
+  exploit merge_split; try exact STEP2; eauto; try sfby viewtac.
   { eapply fulfill_step_lc_from; eauto. }
   i. des.
   exploit reorder_promise_split_promise_split; try exact STEP1; try exact STEP0; eauto.
@@ -566,11 +566,11 @@ Proof.
   }
   i. des.
   exploit Local.promise_step_future; try eexact STEP5; eauto. i. des.
-  exploit reorder_promise_split_fulfill; try exact STEP6; try eexact STEP3; eauto; try by viewtac.
+  exploit reorder_promise_split_fulfill; try exact STEP6; try eexact STEP3; eauto; try sfby viewtac.
   { ii. inv H. eapply Time.lt_strorder. eauto. }
   { ii. inv H. inv STEP5. inv PROMISE. inv MEM. inv SPLIT. eapply Time.lt_strorder. eauto. }
   i. des.
-  exploit fulfill_step_future; try eexact STEP7; try exact WF3; eauto; try by viewtac. i. des.
+  exploit fulfill_step_future; try eexact STEP7; try exact WF3; eauto; try sfby viewtac. i. des.
   exploit promise_fulfill_write_sim_memory; try eexact STEP5; eauto. i. des.
   exploit Local.write_step_future; eauto. i. des.
   exploit promise_fulfill_write_sim_memory; try eexact STEP8; eauto.
@@ -613,7 +613,7 @@ Proof.
   exploit Local.write_step_future; eauto. i. des.
   exploit write_promise_fulfill; eauto. i. des.
   exploit Local.promise_step_future; eauto. i. des.
-  exploit merge_split; try exact STEP2; eauto; try by viewtac.
+  exploit merge_split; try exact STEP2; eauto; try sfby viewtac.
   { eapply fulfill_step_lc_from; eauto. }
   i. des.
   exploit promise_lower_promise_split_promise_split_promise_lower; try exact STEP1; try exact STEP0; eauto.
@@ -626,10 +626,10 @@ Proof.
   i. des.
   exploit Local.promise_step_future; try eexact STEP5; eauto. i. des.
   (* start from here *)
-  exploit reorder_promise_lower_fulfill; try exact STEP6; try eexact STEP3; eauto; try by viewtac.
+  exploit reorder_promise_lower_fulfill; try exact STEP6; try eexact STEP3; eauto; try sfby viewtac.
   { ii. inv H. exfalso. eapply Time.lt_strorder. eauto. }
   i. des.
-  exploit fulfill_step_future; try eexact STEP7; try exact WF3; eauto; try by viewtac. i. des.
+  exploit fulfill_step_future; try eexact STEP7; try exact WF3; eauto; try sfby viewtac. i. des.
   exploit promise_fulfill_write_sim_memory; try eexact STEP5; eauto. i. des.
   exploit Local.write_step_future; eauto. i. des.
   exploit promise_fulfill_write_sim_memory; try eexact STEP8; eauto.
@@ -710,7 +710,7 @@ Proof.
     exploit Memory.future_closed_opt_view; try exact REL0_CLOSED; eauto. i.
     exploit Local.write_step_future; try apply STEP2; eauto. i. des.
     hexploit sim_local_write_bot; try apply STEP3;
-      try apply View.opt_None_spec; try refl; eauto; try by viewtac. i. des.
+      try apply View.opt_None_spec; try refl; eauto; try sfby viewtac. i. des.
     esplits; cycle 1; eauto; try (etrans; eauto).
   - inv STEP1.
     exploit Local.write_step_future; try apply STEP2; eauto. i. des.

@@ -5,25 +5,25 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
-Require Import SimThread.
-Require Import iCompatibility.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
+Require Import transformation.SimThread.
+Require Import transformation.iCompatibility.
 
-Require Import ReorderStep.
+Require Import transformation.ReorderStep.
 
-Require Import ITreeLang.
-Require Import Program.
+Require Import itree.ITreeLang.
+From Stdlib Require Import Program.
 
 Set Implicit Arguments.
 
@@ -169,7 +169,7 @@ Proof.
       + right. econs; eauto. etrans; eauto.
     - (* load *)
       right.
-      exploit sim_local_read; try exact LOCAL; (try by etrans; eauto); eauto; try refl. i. des.
+      exploit sim_local_read; try exact LOCAL; (try sfby etrans; eauto); eauto; try refl. i. des.
       exploit reorder_read_read; try exact READ; try exact STEP_SRC; eauto. i. des.
       esplits.
       + ss.
@@ -184,8 +184,8 @@ Proof.
     - (* update-load *)
       right.
       guardH ORDW2.
-      exploit sim_local_read; try exact LOCAL; (try by etrans; eauto); eauto; try refl. i. des.
-      exploit reorder_read_read; try exact READ; try exact STEP_SRC; try by eauto. i. des.
+      exploit sim_local_read; try exact LOCAL; (try sfby etrans; eauto); eauto; try refl. i. des.
+      exploit reorder_read_read; try exact READ; try exact STEP_SRC; try sfby eauto. i. des.
       esplits.
       + ss.
       + econs 2; [|econs 1]. econs.
@@ -200,8 +200,8 @@ Proof.
       right.
       guardH ORD.
       hexploit sim_local_write_bot; try exact LOCAL1; try exact SC;
-        try exact WF2; try refl; eauto; try by viewtac. i. des.
-      exploit reorder_read_write; try exact READ; try exact STEP_SRC; eauto; try by viewtac. i. des.
+        try exact WF2; try refl; eauto; try sfby viewtac. i. des.
+      exploit reorder_read_write; try exact READ; try exact STEP_SRC; eauto; try sfby viewtac. i. des.
       esplits.
       + ss.
       + econs 2; [|econs 1]. econs.
@@ -314,7 +314,7 @@ Proof.
       + right. econs 2; eauto.
     - (* load *)
       right.
-      exploit sim_local_read; (try by etrans; eauto); eauto; try refl. i. des.
+      exploit sim_local_read; (try sfby etrans; eauto); eauto; try refl. i. des.
       exploit reorder_racy_read_read; try exact READ; try exact STEP_SRC; eauto. i. des.
       esplits.
       + ss.
@@ -329,8 +329,8 @@ Proof.
     - (* update-load *)
       right.
       guardH ORDW2.
-      exploit sim_local_read; (try by etrans; eauto); eauto; try refl. i. des.
-      exploit reorder_racy_read_read; try exact READ; try exact STEP_SRC; try by eauto. i. des.
+      exploit sim_local_read; (try sfby etrans; eauto); eauto; try refl. i. des.
+      exploit reorder_racy_read_read; try exact READ; try exact STEP_SRC; try sfby eauto. i. des.
       esplits.
       + ss.
       + econs 2; [|econs 1]. econs.
@@ -345,7 +345,7 @@ Proof.
       right.
       guardH ORD.
       hexploit sim_local_write_bot; try exact LOCAL1; try exact SC;
-        try exact WF_SRC; try exact WF_TGT; try refl; eauto; try by viewtac. i. des.
+        try exact WF_SRC; try exact WF_TGT; try refl; eauto; try sfby viewtac. i. des.
       exploit reorder_racy_read_write; try exact READ; eauto. i. des.
       esplits.
       + ss.

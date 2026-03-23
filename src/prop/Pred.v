@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import RelationClasses.
-Require Import Coq.Logic.Classical.
+From Stdlib Require Import Lia.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import Logic.Classical.
 
 From Paco Require Import paco.
 From sflib Require Import sflib.
@@ -11,18 +11,18 @@ From PromisingLib Require Import DataStructure.
 From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
-Require Import Time.
+Require Import lang.Time.
 From PromisingLib Require Import Event.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
-Require Import Behavior.
-Require Import Trace.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
+Require Import lang.Behavior.
+Require Import prop.Trace.
 
 Set Implicit Arguments.
 
@@ -463,7 +463,7 @@ Section PredStep.
       exists (times: Loc.t -> list Time.t),
         (<<EVT: wf_time_evt (fun loc ts => List.In ts (times loc)) e >>).
   Proof.
-    destruct e; ss; try by (exists (fun _ => []); splits; auto).
+    destruct e; ss; try sfby (exists (fun _ => []); splits; auto).
     { exists (fun loc' => if Loc.eq_dec loc' loc then [from; to] else []).
       des_ifs; ss; auto. }
     { exists (fun loc' => if Loc.eq_dec loc' loc then [from; to] else []).

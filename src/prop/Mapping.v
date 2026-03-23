@@ -1,5 +1,5 @@
-Require Import Lia.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import RelationClasses.
 
 From Paco Require Import paco.
 From sflib Require Import sflib.
@@ -10,24 +10,24 @@ From PromisingLib Require Import DataStructure.
 From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
-Require Import Time.
+Require Import lang.Time.
 From PromisingLib Require Import Event.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import Cover.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import prop.Cover.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
 
-Require Import Program.
-Require Import Cell.
-Require Import Time.
-Require Import Pred.
-Require Import Trace.
-Require Import MemoryProps.
+From Stdlib Require Import Program.
+Require Import lang.Cell.
+Require Import lang.Time.
+Require Import prop.Pred.
+Require Import prop.Trace.
+Require Import prop.MemoryProps.
 
 Set Implicit Arguments.
 
@@ -2157,7 +2157,7 @@ Section MAPPED.
       esplits; eauto.
       econs; ss.
       eapply TimeFacts.le_lt_lt; eauto.
-      exploit map_le; (try by econs; exact WRITABLE); eauto.
+      exploit map_le; (try sfby econs; exact WRITABLE); eauto.
       intros x. inv x; ss. inv H.
       exploit NCLPS; eauto; ss.
       exists fto. splits; ss.
@@ -2180,7 +2180,7 @@ Section MAPPED.
     i. des. esplits; eauto.
     - instantiate (1 := (ffrom', fto', fmsg') :: fmsgs). eauto.
     - econs 2; eauto.
-      + exploit map_le; (try by econs; exact WRITABLE_EX); eauto.
+      + exploit map_le; (try sfby econs; exact WRITABLE_EX); eauto.
         intros x. eapply TimeFacts.le_lt_lt; eauto.
         inv x; ss. inv H5.
         exploit H2; eauto; ss.
@@ -2216,7 +2216,7 @@ Section MAPPED.
     eapply readable_map in READABLE; eauto; cycle 1.
     { eapply map_cur; eauto. }
     esplits.
-    - econs; eauto; try by (etrans; eauto).
+    - econs; eauto; try sfby (etrans; eauto).
       eapply TViewFacts.readable_mon; eauto.
       + inv TVIEWLE. auto.
       + refl.
@@ -2481,7 +2481,7 @@ Section MAPPED.
     esplits; eauto. econs; eauto.
     - destruct (Memory.get loc fto (Local.promises flc)) as [[]|] eqn:GETPF; ss.
       inv LOCAL. inv PROMISES. exploit ONLY; eauto. i. des.
-      destruct (classic (to = to0)); try by congr.
+      destruct (classic (to = to0)); try sfby congr.
       destruct (TimeFacts.le_lt_dec to to0).
       + inv l; ss. exploit MAP_LT; try exact H0; eauto. i. timetac.
       + exploit MAP_LT; try exact l; eauto. i. timetac.
@@ -4674,7 +4674,7 @@ Proof.
     { eauto. }
     { eapply Trace.steps_one. eauto. }
   }
-  { inv STEP_FAILURE; inv STEP; ss. inv LOCAL0; ss; try by (inv LOCAL1; ss). }
+  { inv STEP_FAILURE; inv STEP; ss. inv LOCAL0; ss; try sfby (inv LOCAL1; ss). }
   i. des.
   eapply List.Forall2_app_inv_l in TRACE. des; subst.
   inv TRACE0. inv H3. des.

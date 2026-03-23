@@ -1,4 +1,4 @@
-From ITree Require Export ITree Subevent.
+From ITree Require Export ITree Core.Subevent.
 
 From ITree Require Export
      ITree
@@ -6,11 +6,11 @@ From ITree Require Export
      Events.MapDefault
      Events.State
      Events.StateFacts
-     EqAxiom (* We use bisimulation_is_eq axiom *)
-     HeterogeneousRelations
+     Eq.EqAxiom (* We use bisimulation_is_eq axiom *)
+     Basics.HeterogeneousRelations
 .
 From ExtLib Require Export
-     Functor FunctorLaws
+     Structures.Functor Structures.FunctorLaws
      Structures.Maps
 .
 
@@ -24,12 +24,12 @@ Open Scope cat_scope.
 Open Scope monad_scope.
 Open Scope itree_scope.
 
-Require Import Program.
+From Stdlib Require Import Program.
 From sflib Require Import sflib.
 From Paco Require Import paco.
 
-Require ClassicalFacts.
-Require FunctionalExtensionality.
+From Stdlib Require ClassicalFacts.
+From Stdlib Require FunctionalExtensionality.
 
 Set Implicit Arguments.
 
@@ -372,7 +372,7 @@ Abort.
 
 
 
-Definition resum_itr E F `{E -< F}: itree E ~> itree F := fun _ itr => interp (fun _ e => trigger e) itr.
+Definition resum_itr E F `{E -< F}: itree E ~> itree F := fun _ itr => interp (M := itree F) (fun _ e => trigger e) itr.
 
 Definition tauK {E R}: R -> itree E R := fun r => tau;; Ret r.
 #[export] Hint Unfold tauK: core.
@@ -436,4 +436,5 @@ Lemma idK_spec E R (i0: itree E R): i0 = i0 >>= idK. Proof. unfold idK. irw. ref
 (*       ired. cbn. gstep. econs; eauto with paco. gstep. econs; eauto with paco. *)
 (* Qed. *)
 
-Require Import BinNums. Coercion BinIntDef.Z.of_nat: nat >-> Z.
+From Stdlib Require Import BinNums.
+Coercion BinIntDef.Z.of_nat: nat >-> Z.

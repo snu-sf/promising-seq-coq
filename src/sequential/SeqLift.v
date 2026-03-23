@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -10,29 +10,29 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import Cover.
-Require Import MemorySplit.
-Require Import MemoryMerge.
-Require Import FulfillStep.
-Require Import MemoryProps.
+Require Import prop.Cover.
+Require Import prop.MemorySplit.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
+Require Import prop.MemoryProps.
 
-Require Import LowerMemory.
-Require Import JoinedView.
+Require Import sequential.LowerMemory.
+Require Import prop.JoinedView.
 
-Require Import MaxView.
-Require Import Delayed.
+Require Import sequential.MaxView.
+Require Import sequential.Delayed.
 
-Require Import Lia.
+From Stdlib Require Import Lia.
 
 Set Implicit Arguments.
 
@@ -1556,9 +1556,9 @@ Lemma sim_message_mon_mapping flag_tgt loc f0 f1 v msg_src msg_tgt
     sim_message flag_tgt loc f0 v msg_src msg_tgt <-> sim_message flag_tgt loc f1 v msg_src msg_tgt.
 Proof.
   split; i.
-  { inv H; try by (econs; auto). econs 1; eauto.
+  { inv H; try sfby (econs; auto). econs 1; eauto.
     erewrite <- sim_opt_view_mon_mapping; eauto. }
-  { inv H; try by (econs; auto). econs 1; eauto. erewrite sim_opt_view_mon_mapping; eauto. }
+  { inv H; try sfby (econs; auto). econs 1; eauto. erewrite sim_opt_view_mon_mapping; eauto. }
 Qed.
 
 Variant sim_message_max
@@ -3261,7 +3261,7 @@ Proof.
   destruct x. eapply H in IN1. ss.
   eexists t1, to0. esplits; eauto.
   { i. eapply COVERED. eapply Interval.le_mem; eauto. econs; eauto; ss.
-    { unguard. des; clarify; try by eapply Time.bot_spec.
+    { unguard. des; clarify; try sfby eapply Time.bot_spec.
       { hexploit (GREATEST ffrom0); eauto.
         { right. refine (List.in_map snd _ (_, _) _). eapply H; eauto. }
         i. destruct (Time.le_lt_dec from Time.bot); auto.
@@ -3985,9 +3985,10 @@ Proof.
           { etrans; eauto. }
           { econs. }
         }
-        { econs; eauto.
-          { etrans; eauto. }
-          { econs. }
+        { econs; eauto;
+            try (etrans; eauto; fail);
+            try (eapply sim_opt_view_mon_tgt; eauto; fail).
+          all: try econs; eauto.
         }
       }
       { i. inv MSG_LE. eapply CLOSED; eauto. }
@@ -5091,15 +5092,15 @@ Proof.
         { destruct (classic (List.In to_src dom)).
           { hexploit SAMETS; eauto. i. esplits; eauto.
             i. hexploit GET0; eauto. i. des. rewrite GET1 in H0. inv H0.
-            { esplits; eauto. inv MSG; try by (econs; auto). }
-            { esplits; eauto. inv MSG; try by (econs; auto). }
-            { esplits; eauto. inv MSG; try by (econs; auto). }
+            { esplits; eauto. inv MSG; try sfby (econs; auto). }
+            { esplits; eauto. inv MSG; try sfby (econs; auto). }
+            { esplits; eauto. inv MSG; try sfby (econs; auto). }
           }
           { hexploit OTHERTS; eauto. i. esplits; eauto.
             i. hexploit GET0; eauto. i. des.
             rewrite H0. esplits; eauto.
-            inv MSG; try by (econs; auto).
-            destruct vw_src; try by (econs; auto).
+            inv MSG; try sfby (econs; auto).
+            destruct vw_src; try sfby (econs; auto).
             exfalso. eapply H. eapply DOM. eauto.
           }
         }
@@ -5229,7 +5230,7 @@ Proof.
             }
             { eapply SAMETS in IN. erewrite (@Memory.lower_o mem2) in IN; eauto.
               des_ifs. ss. des; clarify. rewrite GET.
-              inv IN; try by econs.
+              inv IN; try sfby econs.
             }
           }
         }
@@ -5480,7 +5481,7 @@ Lemma version_wf_join f v0 v1
     version_wf f (version_join v0 v1).
 Proof.
   ii. unfold version_join.
-  destruct (Max.max_dec (v0 loc) (v1 loc)).
+  destruct (PeanoNat.Nat.max_dec (v0 loc) (v1 loc)).
   { rewrite e. auto. }
   { rewrite e. auto. }
 Qed.

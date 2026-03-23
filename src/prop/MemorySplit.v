@@ -8,11 +8,11 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
 
 Set Implicit Arguments.
 
@@ -87,7 +87,7 @@ Module MemorySplit.
         clear -o1. des; congr.
     }
     i. des. esplits; eauto.
-    cut (mem4 = mem3); [by i; subst|].
+    cut (mem4 = mem3); [sfby i; subst|].
     apply Memory.ext. i.
     erewrite Memory.remove_o; eauto. erewrite Memory.remove_o; eauto.
     erewrite Memory.split_o; eauto. erewrite (@Memory.remove_o mem3); eauto.

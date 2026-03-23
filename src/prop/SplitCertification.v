@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,28 +13,28 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Pred.
-Require Import Trace.
-Require Import Behavior.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import prop.Pred.
+Require Import prop.Trace.
+Require Import lang.Behavior.
 
-Require Import MemoryMerge.
-Require Import ReorderCancel.
-Require Import ReorderReserve.
-Require Import MemoryProps.
-Require Import Mapping.
-Require Import PFConsistent.
-Require Import PFConsistentStrong.
-Require Import FutureCertify.
+Require Import prop.MemoryMerge.
+Require Import prop.ReorderCancel.
+Require Import prop.ReorderReserve.
+Require Import prop.MemoryProps.
+Require Import prop.Mapping.
+Require Import prop.PFConsistent.
+Require Import prop.PFConsistentStrong.
+Require Import prop.FutureCertify.
 
-Require Import PreReserve.
+Require Import prop.PreReserve.
 
 Set Implicit Arguments.
 

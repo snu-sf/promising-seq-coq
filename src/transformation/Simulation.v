@@ -6,15 +6,15 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import SimMemory.
+Require Import transformation.SimMemory.
 
 Set Implicit Arguments.
 
@@ -82,5 +82,5 @@ Lemma sim_future
   sim ths_src sc2_src mem2_src ths_tgt sc2_tgt mem2_tgt.
 Proof.
   pfold. ii.
-  punfold SIM. exploit SIM; (try by etrans; eauto); eauto.
+  punfold SIM. exploit SIM; (try sfby etrans; eauto); eauto.
 Qed.

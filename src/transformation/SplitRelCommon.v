@@ -6,21 +6,21 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import FulfillStep.
+Require Import prop.FulfillStep.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
-Require Import SimThread.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
+Require Import transformation.SimThread.
 
 Set Implicit Arguments.
 
@@ -72,8 +72,8 @@ Proof.
   - econs; eauto. s.
     unfold TView.write_tview, View.singleton_ur_if. repeat (condtac; aggrtac).
     econs; repeat (condtac; aggrtac);
-      (try by etrans; [apply LOCAL1|aggrtac]);
-      (try by rewrite <- ? View.join_r; econs; aggrtac);
+      (try sfby etrans; [apply LOCAL1|aggrtac]);
+      (try sfby rewrite <- ? View.join_r; econs; aggrtac);
       (try apply WF1_TGT).
     + ss. i. unfold LocFun.find. repeat (condtac; aggrtac).
       * etrans; eauto. apply LOCAL1.
@@ -118,7 +118,7 @@ Proof.
   exploit sim_local_fulfill_released; try apply STEP2;
     try apply LOCAL2; try apply MEM2; eauto.
   { eapply Memory.future_closed_opt_view; eauto. }
-  { by inv STEP1. }
+  { sfby inv STEP1. }
   i. des.
   exploit promise_fulfill_write_sim_memory; try exact STEP_SRC; try exact STEP_SRC0; eauto.
   { i. hexploit ORD; eauto. i. des. splits; ss.

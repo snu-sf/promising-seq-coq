@@ -9,23 +9,23 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import ITreeLang.
+Require Import itree.ITreeLang.
 
-Require Import PromiseConsistent.
-Require Import CompressSteps.
+Require Import prop.PromiseConsistent.
+Require Import prop.CompressSteps.
 
-Require Import iPromotionDef.
-Require Import SimCommon.
-Require Import PromotionProgress.
+Require Import promotion.iPromotionDef.
+Require Import promotion.SimCommon.
+Require Import promotion.PromotionProgress.
 
 Set Implicit Arguments.
 
@@ -119,7 +119,7 @@ Module SimThreadPromotion.
     { exploit Memory.add_get0; try exact x0. i. des.
       exploit Memory.max_ts_spec; try exact GET0. i. des.
       inv MAX; ss.
-      revert GET1. erewrite Memory.add_o; eauto. condtac; ss; try by des; ss.
+      revert GET1. erewrite Memory.add_o; eauto. condtac; ss; try sfby des; ss.
       guardH o. i.
       exploit Memory.max_ts_spec; try exact GET1. i. des.
       specialize (Time.incr_spec (Memory.max_ts l mem1_src)). i.
@@ -203,12 +203,12 @@ Module SimThreadPromotion.
         etrans; eauto. econs; i.
         * revert GET_SRC. erewrite Memory.remove_o; eauto. condtac; ss. i.
           esplits; eauto. refl.
-        * erewrite Memory.remove_o; eauto. condtac; ss; try by des; ss.
+        * erewrite Memory.remove_o; eauto. condtac; ss; try sfby des; ss.
           esplits; eauto. refl.
       + etrans; eauto. econs; i.
         * revert GET_SRC. erewrite Memory.remove_o; eauto. condtac; ss. i.
           esplits; eauto. refl.
-        * erewrite Memory.remove_o; eauto. condtac; ss; try by des; ss.
+        * erewrite Memory.remove_o; eauto. condtac; ss; try sfby des; ss.
           esplits; eauto. refl.
       + ii. revert GETP.
         erewrite Memory.remove_o; eauto. condtac; ss. i. guardH o.
@@ -383,7 +383,7 @@ Module SimThreadPromotion.
     rewrite unfold_promote_itree in STATE. destruct e; ss.
     (* load *)
     { des_ifs; ss.
-      inv STATE. destruct e_tgt; ss; try by inv LOCAL0.
+      inv STATE. destruct e_tgt; ss; try sfby inv LOCAL0.
       exploit PromotionProgress.progress_read; try eapply LATEST; eauto.
       { destruct released; eauto using View.bot_spec. }
       i. des. esplits.
@@ -402,7 +402,7 @@ Module SimThreadPromotion.
     }
     (* store *)
     { des_ifs; ss.
-      inv STATE. destruct e_tgt; ss; try by inv LOCAL0.
+      inv STATE. destruct e_tgt; ss; try sfby inv LOCAL0.
       exploit PromotionProgress.progress_write; try exact WF1_SRC; try exact SC1_SRC; eauto.
       { ss. apply View.bot_spec. }
       i. des. esplits.
@@ -418,7 +418,7 @@ Module SimThreadPromotion.
           erewrite Memory.remove_o; eauto. condtac; ss.
           erewrite Memory.add_o; eauto. condtac; ss. i.
           guardH o. guardH o0.
-          destruct (Loc.eq_dec loc l); try by subst; congr.
+          destruct (Loc.eq_dec loc l); try sfby subst; congr.
           exploit FULFILLABLE; eauto. i. des. split.
           * unfold tview_released_le_loc in *.
             unfold TView.write_tview. ss.
@@ -430,7 +430,7 @@ Module SimThreadPromotion.
           exploit Memory.add_get0; try exact MEM0. i. des.
           replace (Memory.max_ts l mem0) with (Time.incr (Memory.max_ts l mem1_src)); eauto.
           exploit Memory.max_ts_spec; try exact GET0. i. des. inv MAX; ss.
-          revert GET1. erewrite Memory.add_o; eauto. condtac; ss; try by des.
+          revert GET1. erewrite Memory.add_o; eauto. condtac; ss; try sfby des.
           guardH o. i.
           exploit Memory.max_ts_spec; try exact GET1. i. des.
           exploit TimeFacts.lt_le_lt; try exact H; try exact MAX. i.
@@ -445,7 +445,7 @@ Module SimThreadPromotion.
     }
     { des_ifs; ss.
       (* fa *)
-      { inv STATE. destruct e_tgt; ss; try by inv LOCAL0.
+      { inv STATE. destruct e_tgt; ss; try sfby inv LOCAL0.
         exploit PromotionProgress.progress_read; try eapply LATEST; eauto.
         { destruct released; eauto using View.bot_spec. }
         i. des.
@@ -468,7 +468,7 @@ Module SimThreadPromotion.
             erewrite Memory.remove_o; eauto. condtac; ss.
             erewrite Memory.add_o; eauto. condtac; ss. i.
             guardH o. guardH o0.
-            destruct (Loc.eq_dec loc l); try by subst; congr.
+            destruct (Loc.eq_dec loc l); try sfby subst; congr.
             exploit FULFILLABLE; eauto. i. des. split.
             * unfold tview_released_le_loc in *.
               unfold TView.write_tview. ss.
@@ -480,7 +480,7 @@ Module SimThreadPromotion.
             exploit Memory.add_get0; try exact MEM0. i. des.
             replace (Memory.max_ts l mem0) with (Time.incr (Memory.max_ts l mem1_src)); eauto.
             exploit Memory.max_ts_spec; try exact GET0. i. des. inv MAX; ss.
-            revert GET1. erewrite Memory.add_o; eauto. condtac; ss; try by des.
+            revert GET1. erewrite Memory.add_o; eauto. condtac; ss; try sfby des.
             guardH o. i.
             exploit Memory.max_ts_spec; try exact GET1. i. des.
             exploit TimeFacts.lt_le_lt; try exact H; try exact MAX. i.
@@ -495,7 +495,7 @@ Module SimThreadPromotion.
               etrans; try eapply TVIEW_FUTURE; eauto.
       }
       (* cas success *)
-      { inv STATE. destruct e_tgt; ss; try by inv LOCAL0.
+      { inv STATE. destruct e_tgt; ss; try sfby inv LOCAL0.
         exploit PromotionProgress.progress_read; try eapply LATEST; eauto.
         { destruct released; eauto using View.bot_spec. }
         i. des.
@@ -519,7 +519,7 @@ Module SimThreadPromotion.
             erewrite Memory.remove_o; eauto. condtac; ss.
             erewrite Memory.add_o; eauto. condtac; ss. i.
             guardH o. guardH o0.
-            destruct (Loc.eq_dec loc l); try by subst; congr.
+            destruct (Loc.eq_dec loc l); try sfby subst; congr.
             exploit FULFILLABLE; eauto. i. des. split.
             * unfold tview_released_le_loc in *.
               unfold TView.write_tview. ss.
@@ -531,7 +531,7 @@ Module SimThreadPromotion.
             exploit Memory.add_get0; try exact MEM0. i. des.
             replace (Memory.max_ts l mem0) with (Time.incr (Memory.max_ts l mem1_src)); eauto.
             exploit Memory.max_ts_spec; try exact GET0. i. des. inv MAX; ss.
-            revert GET1. erewrite Memory.add_o; eauto. condtac; ss; try by des.
+            revert GET1. erewrite Memory.add_o; eauto. condtac; ss; try sfby des.
             guardH o. i.
             exploit Memory.max_ts_spec; try exact GET1. i. des.
             exploit TimeFacts.lt_le_lt; try exact H; try exact MAX. i.
@@ -546,7 +546,7 @@ Module SimThreadPromotion.
               etrans; try eapply TVIEW_FUTURE; eauto.
       }
       (* cas fail *)
-      { inv STATE. destruct e_tgt; ss; try by inv LOCAL0.
+      { inv STATE. destruct e_tgt; ss; try sfby inv LOCAL0.
         exploit PromotionProgress.progress_read; try eapply LATEST; eauto.
         { destruct released; eauto using View.bot_spec. }
         i. des. esplits.
@@ -564,7 +564,7 @@ Module SimThreadPromotion.
             exploit Local.read_step_future; eauto. i. des.
             apply TVIEW_FUTURE.
       }
-      { inv STATE. destruct e_tgt; ss; try by inv LOCAL0.
+      { inv STATE. destruct e_tgt; ss; try sfby inv LOCAL0.
         exploit PromotionProgress.progress_read; try eapply LATEST; eauto.
         { destruct released; eauto using View.bot_spec. }
         i. des. esplits.
@@ -1168,7 +1168,7 @@ Module SimThreadPromotion.
       { econs; eauto. }
       { unfold Thread.steps_failure.
         inv STEP_SRC; ss; try congr.
-        destruct pf; try by inv STEP0; inv STEP1; ss; congr.
+        destruct pf; try sfby inv STEP0; inv STEP1; ss; congr.
         esplits; eauto. congr.
       }
       unfold Thread.steps_failure. i. des.

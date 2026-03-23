@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 
@@ -9,9 +9,9 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
 
 Set Implicit Arguments.
 
@@ -1926,7 +1926,7 @@ Module Memory.
     hexploit promise_bot_none; eauto. i.
     hexploit op_future; eauto.
     { eapply promise_op. eauto. }
-    { by inv PROMISE. }
+    { sfby inv PROMISE. }
     i. des. eauto.
   Qed.
 
@@ -2198,7 +2198,7 @@ Module Memory.
     closed mem2.
   Proof.
     inv FUTURE. inv CLOSED. econs; i.
-    - destruct msg; try by (splits; econs).
+    - destruct msg; try sfby (splits; econs).
       destruct (get loc to mem1) as [[f []]|] eqn:GET1.
       + exploit CLOSED0; eauto. i. des.
         exploit SOUND; eauto; ss. intros x. des.

@@ -7,17 +7,17 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
 
-Require Import MemorySplit.
-Require Import MemoryMerge.
+Require Import prop.MemorySplit.
+Require Import prop.MemoryMerge.
 
 Set Implicit Arguments.
 
@@ -125,7 +125,7 @@ Proof.
   inv WF. exploit PROMISES; eauto. i.
   exploit Memory.lower_exists_same; try exact GET; try refl; eauto. i.
   exploit Memory.lower_exists_same; try exact x; try refl; eauto. i.
-  esplits. econs; eauto; try by (destruct ord; ss).
+  esplits. econs; eauto; try sfby (destruct ord; ss).
   econs; [econs 3; eauto|]; ss.
   inv CLOSED. exploit CLOSED0; eauto. i. des. ss.
 Qed.

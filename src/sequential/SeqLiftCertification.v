@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -10,37 +10,37 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import Cover.
-Require Import MemorySplit.
-Require Import MemoryMerge.
-Require Import FulfillStep.
-Require Import MemoryProps.
+Require Import prop.Cover.
+Require Import prop.MemorySplit.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
+Require Import prop.MemoryProps.
 
-Require Import LowerMemory.
-Require Import JoinedView.
+Require Import sequential.LowerMemory.
+Require Import prop.JoinedView.
 
-Require Import MaxView.
-Require Import Delayed.
+Require Import sequential.MaxView.
+Require Import sequential.Delayed.
 
-Require Import Lia.
+From Stdlib Require Import Lia.
 
-Require Import JoinedView.
-Require Import SeqLift.
-Require Import Sequential.
+Require Import prop.JoinedView.
+Require Import sequential.SeqLift.
+Require Import sequential.Sequential.
 
-Require Import Pred.
+Require Import prop.Pred.
 
-Require Import SeqLiftStep.
+Require Import sequential.SeqLiftStep.
 
 
 Variant sim_thread_sol
@@ -332,7 +332,8 @@ Proof.
       { rewrite BOT in GET0; auto. rewrite Memory.bot_get in GET0. ss. }
       { destruct (flag_src loc) eqn:EQ.
         { erewrite sim_promises_none in H; eauto. ss. }
-        { destruct (D loc) eqn:DEBT0; eauto. hexploit DEBT; eauto. i. des; clarify. }
+        { destruct (D loc) eqn:DEBT0; eauto.
+          try (hexploit DEBT; eauto; i; des; clarify; fail). }
       }
     }
     { ii. ss. rewrite NONE in GET. des_ifs. }
@@ -366,7 +367,7 @@ Proof.
   eapply Memory.ext. i. rewrite Memory.bot_get.
   inv SIM. destruct (Memory.get loc ts lc.(Local.promises)) eqn:GET; auto.
   destruct p. exploit DEBT0; eauto. i. des.
-  exfalso. hexploit DEBT1; eauto. rewrite DEBT. ss.
+  exfalso. hexploit DEBT1; eauto.
 Qed.
 
 Lemma sim_thread_sol_failure

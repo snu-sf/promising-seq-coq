@@ -7,26 +7,26 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
-Require Import Configuration.
-Require Import Behavior.
+Require Import lang.Configuration.
+Require Import lang.Behavior.
 
-Require Import ITreeLang.
-Require Import NoMix.
-Require Import Sequential.
-Require Import SequentialITree.
-Require Import SequentialCompatibility.
-Require Import SequentialITreeAdequacy.
+Require Import itree.ITreeLang.
+Require Import sequential.NoMix.
+Require Import sequential.Sequential.
+Require Import itree.SequentialITree.
+Require Import itree.SequentialCompatibility.
+Require Import sequential.SequentialITreeAdequacy.
 
-Require Import WRforwarding.
-Require Import WRforwardingProof2.
+Require Import optimizer.WRforwarding.
+Require Import optimizer.WRforwardingProof2.
 
-Require Import RRforwarding.
-Require Import RRforwardingProof2.
+Require Import optimizer.RRforwarding.
+Require Import optimizer.RRforwardingProof2.
 
-Require Import DeadStoreElim.
-Require Import DeadStoreElimProof3.
+Require Import optimizer.DeadStoreElim.
+Require Import optimizer.DeadStoreElimProof3.
 
-Require Import LoadIntro.
+Require Import optimizer.LoadIntro.
 
 Set Implicit Arguments.
 

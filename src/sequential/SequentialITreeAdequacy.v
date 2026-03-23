@@ -7,15 +7,15 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
-Require Import Configuration.
-Require Import Behavior.
+Require Import lang.Configuration.
+Require Import lang.Behavior.
 
-Require Import ITreeLang.
-Require Import NoMix.
-Require Import Sequential.
-Require Import SequentialITree.
-Require Import SequentialCompatibility.
-Require Import SequentialAdequacy.
+Require Import itree.ITreeLang.
+Require Import sequential.NoMix.
+Require Import sequential.Sequential.
+Require Import itree.SequentialITree.
+Require Import itree.SequentialCompatibility.
+Require Import sequential.SequentialAdequacy.
 
 Set Implicit Arguments.
 

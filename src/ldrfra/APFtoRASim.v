@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,21 +13,21 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
 
-Require Import MemoryMerge.
+Require Import prop.MemoryMerge.
 
-Require Import PFStep.
-Require Import OrdStep.
-Require Import Writes.
-Require Import WStep.
-Require Import Stable.
+Require Import ldrfpf.PFStep.
+Require Import ldrfra.OrdStep.
+Require Import ldrfra.Writes.
+Require Import ldrfra.WStep.
+Require Import ldrfra.Stable.
 
 Set Implicit Arguments.
 
@@ -119,8 +119,8 @@ Module APFtoRASim.
       inv SIM.
       unfold RARaceW.ra_race, RARaceW.wr_race, RARaceW.ww_race.
       split; i; des;
-        (try by left; esplits; eauto; congr);
-        (try by right; esplits; eauto; congr).
+        (try sfby left; esplits; eauto; congr);
+        (try sfby right; esplits; eauto; congr).
     Qed.
 
     Lemma sim_local_ra_race
@@ -758,19 +758,19 @@ Module APFtoRASim.
       (* RA synchronized *)
       left. splits; ss.
       - econs; ss. rewrite LOC.
-        exploit REL_WRITES; eauto; try by destruct ord0; ss. i. des.
+        exploit REL_WRITES; eauto; try sfby destruct ord0; ss. i. des.
         rewrite GET_SRC, GET_TGT in *. inv GET0. inv GET.
         econs; ss.
         + replace (Ordering.join ord Ordering.acqrel) with ord by (destruct ord; ss).
-          condtac; try by (destruct ord; ss).
+          condtac; try sfby (destruct ord; ss).
           rewrite CUR. refl.
         + replace (Ordering.join ord Ordering.acqrel) with ord by (destruct ord; ss).
-          condtac; try by (destruct ord; ss).
+          condtac; try sfby (destruct ord; ss).
           rewrite ACQ. refl.
-      - repeat (condtac; ss); try by (destruct ord; ss).
+      - repeat (condtac; ss); try sfby (destruct ord; ss).
         destruct released_src; ss. econs.
         etrans; [|eapply View.join_r]. refl.
-      - repeat (condtac; ss); try by (destruct ord; ss).
+      - repeat (condtac; ss); try sfby (destruct ord; ss).
         destruct released_tgt; ss. econs.
         etrans; [|eapply View.join_r]. refl.
       - inv STEP_SRC.
@@ -889,7 +889,7 @@ Module APFtoRASim.
         + econs; eauto. econs; eauto.
           { econs. inv TS.
             unfold TView.write_released.
-            repeat (condtac; ss); try apply Time.bot_spec; try by destruct ord; ss.
+            repeat (condtac; ss); try apply Time.bot_spec; try sfby destruct ord; ss.
             unfold LocFun.add. condtac; ss.
             unfold TimeMap.join, TimeMap.singleton, LocFun.add, LocFun.find. condtac; ss.
             apply Time.join_spec; ss.
@@ -911,7 +911,7 @@ Module APFtoRASim.
           }
           condtac; ss; cycle 1.
           { specialize (REL loc0). des_ifs. }
-          do 2 (condtac; ss); try by destruct ord; ss.
+          do 2 (condtac; ss); try sfby destruct ord; ss.
           * rewrite CUR. refl.
           * rewrite CUR. apply View.join_spec; try apply View.join_r.
             etrans; [|apply View.join_l]. apply WF1_TGT.
@@ -948,7 +948,7 @@ Module APFtoRASim.
           erewrite (@Memory.add_o mem2_tgt); eauto.
           condtac; des; ss.
           replace (Ordering.join ord0 Ordering.acqrel) with ord0 in * by (destruct ord0; ss).
-          unfold TView.write_released. condtac; try by (destruct ord0; ss).
+          unfold TView.write_released. condtac; try sfby (destruct ord0; ss).
           esplits; eauto. do 4 f_equal. ss. condtac; ss.
           unfold LocFun.add. condtac; ss.
           rewrite View.le_join_r; cycle 1.
@@ -1045,16 +1045,16 @@ Module APFtoRASim.
         <<LC2: sim_local lc2_src lc2_tgt>> /\
         <<MEM2: sim_memory rels mem2_src mem2_tgt>>.
     Proof.
-      destruct (L loc) eqn:LOC'; try by congr.
+      destruct (L loc) eqn:LOC'; try sfby congr.
       destruct lc1_src, lc1_tgt.
       inv LC1. inv STEP_TGT. inv WRITE. ss. subst.
       exploit promise; try exact PROMISE; eauto; try congr.
       { apply WF1_SRC. }
       i. des. esplits.
       - econs; [des_ifs|].
-        econs; ss.
-        { inv TVIEW. rewrite CUR. ss. }
-        erewrite sim_tview_write_released; eauto. congr.
+        econs; ss;
+          try (inv TVIEW; rewrite CUR; ss; fail);
+          try (erewrite sim_tview_write_released; eauto; congr; fail).
       - econs; ss.
         inv TVIEW. econs; ss; try congr.
         i. unfold LocFun.add.
@@ -1336,7 +1336,7 @@ Module APFtoRASim.
           (STEP_TGT: Local.racy_update_step lc1_tgt mem1_tgt loc to ordr ordw):
       (<<STEP_SRC: Local.racy_update_step lc1_src mem1_src loc to ordr ordw>>).
     Proof.
-      hexploit sim_local_promise_consistent; try eapply LC1; try by inv STEP_TGT; ss. i.
+      hexploit sim_local_promise_consistent; try eapply LC1; try sfby inv STEP_TGT; ss. i.
       inv STEP_TGT; eauto.
       exploit is_racy; eauto.
     Qed.
@@ -1534,7 +1534,7 @@ Module APFtoRASim.
           { inv STEP0. ss. }
           { inv STEP0. ss. destruct releasedr; ss. eauto. }
           { inv STEP0. ss.
-            destruct releasedr; ss; try by apply Stable.bot_stable_view.
+            destruct releasedr; ss; try sfby apply Stable.bot_stable_view.
             eapply STABLE_MEMORY; eauto. left. congr.
           }
           i. des. left. esplits.
@@ -1602,7 +1602,7 @@ Module APFtoRASim.
       - (* racy write step *)
         inv LOCAL1.
         exploit racy_write_step; try exact LOCAL1; eauto. i. des.
-        apply OrdLocal.racy_write_step_le in x0; try by (destruct ord; ss).
+        apply OrdLocal.racy_write_step_le in x0; try sfby (destruct ord; ss).
         left. esplits.
         + econs 2. econs; [|econs 10]; eauto.
         + unguard. esplits; ss.

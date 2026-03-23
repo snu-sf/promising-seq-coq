@@ -1,7 +1,7 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
-Require Import Program.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import Program.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -14,26 +14,26 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Behavior.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Behavior.
 
-Require Import Single.
-Require Import JoinedView.
+Require Import prop.Single.
+Require Import prop.JoinedView.
 
-Require Import LocalDRFPFView.
+Require Import ldrfpf.LocalDRFPFView.
 
-Require Import OrdStep.
-Require Import Stable.
-Require Import WStep.
-Require Import PFtoRA.
-Require Import RARace.
+Require Import ldrfra.OrdStep.
+Require Import ldrfra.Stable.
+Require Import ldrfra.WStep.
+Require Import ldrfra.PFtoRA.
+Require Import ldrfra.RARace.
 
 Set Implicit Arguments.
 

@@ -5,34 +5,34 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
 
-Require Import FulfillStep.
+Require Import prop.FulfillStep.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
-Require Import SimThread.
-Require Import iCompatibility.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
+Require Import transformation.SimThread.
+Require Import transformation.iCompatibility.
 
-Require Import ReorderStep.
-Require Import iReorderLoad.
-Require Import iReorderStore.
-Require Import iReorderUpdate.
-Require Import iReorderFence.
-Require Import iReorderAbort.
+Require Import transformation.ReorderStep.
+Require Import transformation.iReorderLoad.
+Require Import transformation.iReorderStore.
+Require Import transformation.iReorderUpdate.
+Require Import transformation.iReorderFence.
+Require Import transformation.iReorderAbort.
 
-Require Import ITreeLang.
-Require Import Program.
+Require Import itree.ITreeLang.
+From Stdlib Require Import Program.
 
 Set Implicit Arguments.
 
@@ -105,10 +105,10 @@ Proof.
       econs 2; eauto.
   - (* store *)
     right.
-    exploit Local.write_step_future; eauto; try by viewtac. i. des.
+    exploit Local.write_step_future; eauto; try sfby viewtac. i. des.
     hexploit sim_local_write_bot; try exact LOCAL1; try exact SC;
       try exact WF_SRC; try refl; viewtac. i. des.
-    exploit write_promise_fulfill; eauto; try by viewtac. i. des.
+    exploit write_promise_fulfill; eauto; try sfby viewtac. i. des.
     exploit Local.promise_step_future; eauto. i. des.
     esplits.
     + ss.
@@ -131,14 +131,14 @@ Proof.
     exploit Local.write_step_future; eauto. i. des.
     exploit sim_local_read; eauto; try refl. i. des.
     exploit Local.read_step_future; eauto. i. des.
-    hexploit sim_local_write_bot; try apply LOCAL2; try apply LOCAL0; try apply SC; eauto; try refl; try by viewtac. i. des.
-    exploit write_promise_fulfill; eauto; try by viewtac. i. des.
+    hexploit sim_local_write_bot; try apply LOCAL2; try apply LOCAL0; try apply SC; eauto; try refl; try sfby viewtac. i. des.
+    exploit write_promise_fulfill; eauto; try sfby viewtac. i. des.
     exploit Local.promise_step_future; eauto. i. des.
     exploit reorder_read_promise; try exact STEP_SRC; try exact STEP1; eauto. i. des.
     exploit Local.promise_step_future; eauto. i. des.
     exploit Local.read_step_future; eauto. i. des.
     exploit sim_local_fulfill_bot; try exact STEP2; try exact LOCAL4; try exact REL1;
-      try exact WF3; try refl; eauto; try by viewtac. i. des.
+      try exact WF3; try refl; eauto; try sfby viewtac. i. des.
     esplits.
     + ss.
     + eauto.

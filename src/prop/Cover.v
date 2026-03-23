@@ -9,11 +9,11 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
 
 Set Implicit Arguments.
 
@@ -139,7 +139,7 @@ Proof.
     inv H.
     destruct (loc_ts_eq_dec (l, to0) (loc, to)); ss.
     + des. subst. econs; cycle 1; eauto.
-      erewrite Memory.lower_o; eauto. condtac; [|by des].
+      erewrite Memory.lower_o; eauto. condtac; [|sfby des].
       rewrite GET in GET1. inv GET1. eauto.
     + econs; eauto.
       erewrite Memory.lower_o; eauto. rewrite GET1. condtac; ss.

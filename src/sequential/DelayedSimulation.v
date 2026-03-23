@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -10,30 +10,30 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Behavior.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Behavior.
 
-Require Import Cover.
-Require Import MemorySplit.
-Require Import MemoryMerge.
-Require Import FulfillStep.
-Require Import PromiseConsistent.
-Require Import MemoryProps.
+Require Import prop.Cover.
+Require Import prop.MemorySplit.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
+Require Import prop.PromiseConsistent.
+Require Import prop.MemoryProps.
 
-Require Import Program.
+From Stdlib Require Import Program.
 
-Require Import JoinedView.
-Require Import Pred.
-Require Import Delayed.
-Require Import LowerMemory.
+Require Import prop.JoinedView.
+Require Import prop.Pred.
+Require Import sequential.Delayed.
+Require Import sequential.LowerMemory.
 
 Set Implicit Arguments.
 

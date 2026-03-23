@@ -8,23 +8,23 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
 
-Require Import MemoryReorder.
-Require Import MemoryMerge.
-Require Import FulfillStep.
-Require Import PromiseConsistent.
+Require Import prop.MemoryReorder.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
+Require Import prop.PromiseConsistent.
 
-Require Import ReorderTView.
+Require Import transformation.ReorderTView.
 
 Set Implicit Arguments.
 

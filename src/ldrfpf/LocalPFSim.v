@@ -1,5 +1,5 @@
-Require Import RelationClasses.
-Require Import List.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import List.
 
 From Paco Require Import paco.
 From sflib Require Import sflib.
@@ -9,37 +9,37 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import DataStructure.
 From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
-Require Import Time.
+Require Import lang.Time.
 From PromisingLib Require Import Event.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
-Require Import Behavior.
-Require Import Cover.
-Require Import PromiseConsistent.
-Require Import Pred.
-Require Import Trace.
-Require Import JoinedView.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
+Require Import lang.Behavior.
+Require Import prop.Cover.
+Require Import prop.PromiseConsistent.
+Require Import prop.Pred.
+Require Import prop.Trace.
+Require Import prop.JoinedView.
 
-Require Import MemoryProps.
-Require Import OrderedTimes.
-Require SimMemory.
+Require Import prop.MemoryProps.
+Require Import prop.OrderedTimes.
+Require transformation.SimMemory.
 
-Require Import PFStep.
-Require Import LocalPFThread.
-Require Import TimeTraced.
-Require Import PFConsistentStrong.
-Require Import Mapping.
-Require Import GoodFuture.
-Require Import CapMap.
-Require Import CapFlex.
-Require Import Pred.
+Require Import ldrfpf.PFStep.
+Require Import ldrfpf.LocalPFThread.
+Require Import ldrfpf.TimeTraced.
+Require Import prop.PFConsistentStrong.
+Require Import prop.Mapping.
+Require Import prop.GoodFuture.
+Require Import ldrfpf.CapMap.
+Require Import prop.CapFlex.
+Require Import prop.Pred.
 
 Set Implicit Arguments.
 
@@ -111,7 +111,7 @@ Lemma sim_trace_relaxed_writing_event L tr lc we_tgt
           PFRace.writing_event ploc pts we_src>>).
 Proof.
   remember (Some (lc, we_tgt)). ginduction TRACE; eauto; i; clarify.
-  { inv EVENT; try by (esplits; eauto; [econs; eauto; eapply reserving_trace_sim_trace_none; eauto|i; inv WRITING; econs; eauto]).
+  { inv EVENT; try sfby (esplits; eauto; [econs; eauto; eapply reserving_trace_sim_trace_none; eauto|i; inv WRITING; econs; eauto]).
     { esplits; eauto.
       { econs; eauto. eapply reserving_trace_sim_trace_none; eauto. }
       { i. inv WRITING.
@@ -916,7 +916,7 @@ Section SIM.
     replace (all_promises (fun tid' => tid <> tid') prom \\2// prom tid) with
         (all_promises (fun _ => True) prom); cycle 1.
     { extensionality loc. extensionality ts.
-      apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i.
+      apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i.
       { inv H. destruct (Ident.eq_dec tid tid0).
         { subst. right. auto. }
         { left. econs; eauto. }
@@ -929,7 +929,7 @@ Section SIM.
     replace (all_extra (fun tid' => tid <> tid') extra \\3// extra tid) with
         (all_extra (fun _ => True) extra); cycle 1.
     { extensionality loc. extensionality ts. extensionality from.
-      apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i.
+      apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i.
       { inv H. destruct (Ident.eq_dec tid tid0).
         { subst. right. auto. }
         { left. econs; eauto. }
@@ -978,7 +978,7 @@ Section SIM.
         [[[lang st] lc_src]|] eqn:TID.
     { inv SIM. specialize (THSPF tid). setoid_rewrite TID in THSPF. ss. des_ifs.
       inv THSPF. inv LOCAL. set (CNT:=(sim_promise_contents PROMS) loc ts).
-      inv CNT; try by (exfalso; eapply NEXTRA; eauto).
+      inv CNT; try sfby (exfalso; eapply NEXTRA; eauto).
       exploit ((sim_memory_wf MEMPF) loc from ts); eauto. i. des.
       exploit (UNIQUE from0); eauto. i. subst. esplits; eauto. }
     { exfalso. inv SIM. eapply BOT in TID. des. eapply EXTRA; eauto. }
@@ -1346,7 +1346,7 @@ Section SIM.
         with
           (all_promises (fun tid' => tid <> tid') prom \\2// prom_self); cycle 1.
       { extensionality loc. extensionality ts.
-        apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i.
+        apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i.
         { destruct H.
           { inv H. eapply all_promises_intro with (tid:=tid0); ss. des_ifs. }
           { eapply all_promises_intro with (tid:=tid); ss. des_ifs. }
@@ -1359,7 +1359,7 @@ Section SIM.
         with
           (all_extra (fun tid' => tid <> tid') extra \\3// extra_self); cycle 1.
       { extensionality loc. extensionality ts. extensionality from.
-        apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i.
+        apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i.
         { destruct H.
           { inv H. eapply all_extra_intro with (tid:=tid0); ss. des_ifs. }
           { eapply all_extra_intro with (tid:=tid); ss. des_ifs. }
@@ -1629,13 +1629,13 @@ Section SIM.
     { eapply Local.bot_promise_consistent; eauto. }
     { ss. ii. exploit EXCLUSIVE; eauto. i. des. inv UNCH.
       set (CNT:=(sim_memory_strong_contents MEM) loc ts).
-      inv CNT; ss; try by (exfalso; eapply NPROM0; left; auto).
+      inv CNT; ss; try sfby (exfalso; eapply NPROM0; left; auto).
       symmetry in H0. eapply CAPSRCSTRONG in H0. esplits. econs; eauto. }
     { ss. ii. exploit EXCLUSIVEEXTRA; eauto. intros x. des. inv x.
       set (CNT:=(sim_memory_strong_contents MEM) loc ts).
       exploit ((sim_memory_strong_wf MEM) loc from ts).
       { left. auto. } i. des.
-      inv CNT; ss; try by (exfalso; eapply NEXTRA; left; eauto).
+      inv CNT; ss; try sfby (exfalso; eapply NEXTRA; left; eauto).
       eapply UNIQUE in EXTRA. subst.
       symmetry in H0. eapply CAPSRCSTRONG in H0. esplits. econs; eauto. }
     { ss. i. eapply List.Forall_impl; eauto. i. ss.
@@ -2094,14 +2094,14 @@ Section SIM.
     unfold option_rel in *. des_ifs. inv THSPF. dep_inv THSJOIN. inv LOCAL. inv LOCAL0.
     split.
     { red. extensionality loc. extensionality ts.
-      apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
+      apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
       set (CNT:=(sim_promise_contents PROMS) loc ts). inv CNT; ss.
       specialize (PROMISES loc ts). rewrite <- H2 in *. inv PROMISES; ss.
       { erewrite Memory.bot_get in *. clarify. }
       { erewrite Memory.bot_get in *. clarify. }
     }
     { red. extensionality loc. extensionality ts. extensionality from.
-      apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
+      apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
       eapply (sim_promise_wf PROMS) in H. des.
       set (CNT:=(sim_promise_contents PROMS) loc from). inv CNT; ss.
       specialize (PROMISES loc from). rewrite <- H in *. inv PROMISES; ss.
@@ -2126,7 +2126,7 @@ Section SIM.
     dep_inv THREAD. inv LOCALPF. inv LOCALJOIN. split; i.
     { split.
       { set (CNT0:=(sim_memory_contents MEMPF) loc ts).
-        inv CNT0; ss; try by (exfalso; try apply NPROM; right; eauto).
+        inv CNT0; ss; try sfby (exfalso; try apply NPROM; right; eauto).
         ii. inv H0. rewrite GET in *. clarify. }
       { set (CNT0:=(sim_promise_contents PROMS) loc ts).
         set (CNT1:=PROMISES loc ts).
@@ -2303,11 +2303,11 @@ Section SIM.
         rewrite TIDTGT in *. unfold option_rel in *. des_ifs. eauto. }
       i. des. esplits; eauto.
       extensionality loc. extensionality ts. extensionality from.
-      apply Coq.Logic.PropExtensionality.propositional_extensionality.
+      apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
       split; i; ss. eapply EXTRA; eauto.
     }
     { extensionality loc. extensionality ts. extensionality from.
-      apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
+      apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
       inv SIM. specialize (THSPF tid). specialize (THSJOIN tid). ss.
       rewrite TIDTGT in *. unfold option_rel in *. des_ifs. inv THSPF.
       inv LOCAL. eapply PROMS in H. des. eapply PROMBOT in FORGET. ss. }
@@ -2329,16 +2329,16 @@ Section SIM.
         rewrite TIDTGT in *. unfold option_rel in *. des_ifs. eauto. }
       i. des. esplits; eauto.
       { extensionality loc. extensionality ts.
-        apply Coq.Logic.PropExtensionality.propositional_extensionality.
+        apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
         split; i; ss. eapply PROM; eauto. }
       { extensionality loc. extensionality ts. extensionality from.
-        apply Coq.Logic.PropExtensionality.propositional_extensionality.
+        apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
         split; i; ss. eapply EXTRA; eauto. }
     }
     { assert (PROM: prom tid = bot2).
       { inv SIM. dup TIDTGT. eapply CONSISTENT in TIDTGT; eauto.
         extensionality loc. extensionality ts.
-        apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
+        apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
         eapply CONSISTENT in H; eauto. rewrite NIL in *. des; ss. }
       splits; auto.
       eapply sim_configuration_promises_forget_bot; eauto.
@@ -2393,7 +2393,7 @@ Section SIM.
       destruct (IdentMap.find tid (Configuration.threads c_tgt0)) as [[[lang_tgt st_tgt] lc_tgt]|] eqn:TIDTGT.
       { assert (PROMBOT: prom_self = bot2).
         { extensionality loc. extensionality ts.
-          apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
+          apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
           exploit DECR; eauto. i.
           inv SIM. hexploit CONSISTENT; eauto. i.
           hexploit (pi_consistent_promises H0); eauto. i.
@@ -2407,7 +2407,7 @@ Section SIM.
             rewrite TIDTGT in *. unfold option_rel in *. des_ifs.
             eapply BOT in Heq0. des.
             extensionality loc. extensionality ts.
-            apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
+            apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i; ss.
             eapply PROM. des_ifs; eauto.
           }
         }
@@ -2583,7 +2583,7 @@ Section SIM.
           { erewrite List.filter_In in i. des. des_ifs. }
           { erewrite List.filter_In in n. apply not_and_or in n. des_ifs. des; ss.
             extensionality loc. extensionality ts.
-            apply Coq.Logic.PropExtensionality.propositional_extensionality.
+            apply Stdlib.Logic.PropExtensionality.propositional_extensionality.
             split; i; ss. eapply n.
             eapply sim_configuration_forget_promise_exist in H; eauto. des.
             eapply IdentMap.elements_correct in TID.

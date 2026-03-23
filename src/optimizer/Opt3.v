@@ -1,7 +1,7 @@
 Set Implicit Arguments.
 
-Require Import RelationClasses.
-Require Import List.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import List.
 
 From sflib Require Import sflib.
 
@@ -10,7 +10,7 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 From PromisingLib Require Import Axioms.
 
-Require Import ITreeLang.
+Require Import itree.ITreeLang.
 
 
 

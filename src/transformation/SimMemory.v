@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -10,20 +10,20 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import Cover.
-Require Import MemorySplit.
-Require Import MemoryMerge.
-Require Import FulfillStep.
+Require Import prop.Cover.
+Require Import prop.MemorySplit.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
 
 Set Implicit Arguments.
 
@@ -321,7 +321,7 @@ Lemma sim_memory_add
 Proof.
   inv SIM. econs; i.
   - rewrite add_covered; [|eauto]. rewrite (@add_covered mem2_tgt); [|eauto].
-    econs; i; des; (try by right).
+    econs; i; des; (try sfby right).
     + left. eapply COVER. eauto.
     + left. eapply COVER. eauto.
   - revert GET. erewrite Memory.add_o; eauto. condtac; ss.
@@ -825,12 +825,12 @@ Lemma fulfill_write_sim_memory
 Proof.
   inv FULFILL.
   exploit TViewFacts.write_future_fulfill;
-    try exact REL_CLOSED; try exact SC1; eauto; try by apply WF1.
+    try exact REL_CLOSED; try exact SC1; eauto; try sfby apply WF1.
   { apply WF1. eapply Memory.remove_get0. eauto. }
   i. des.
   exploit MemorySplit.remove_promise_remove;
-    try exact REMOVE; (try by econs; try exact REL_LE; try refl); eauto;
-      try eapply WF1; try by econs; eauto.
+    try exact REMOVE; (try sfby econs; try exact REL_LE; try refl); eauto;
+      try eapply WF1; try sfby econs; eauto.
   { econs. inv REL_LE; try apply Time.bot_spec.
     cut (Time.le (View.rlx (View.unwrap (Some lhs)) loc)
                  (View.rlx (View.unwrap (Some rhs)) loc)).
@@ -864,13 +864,13 @@ Lemma promise_fulfill_write_sim_memory
 Proof.
   exploit Local.promise_step_future; eauto. i. des.
   inv PROMISE. inv FULFILL. ss.
-  exploit TViewFacts.write_future_fulfill; try exact REL_WF; eauto; try by apply WF2.
+  exploit TViewFacts.write_future_fulfill; try exact REL_WF; eauto; try sfby apply WF2.
   { eapply Memory.future_closed_opt_view; eauto. }
   { eapply Memory.promise_get2; eauto. inv PROMISE0; ss. }
   s. i. des.
   exploit MemorySplit.remove_promise_remove;
-    try exact REMOVE; (try by econs; try exact REL_LE; try refl); eauto;
-      try apply WF2; try by econs; eauto.
+    try exact REMOVE; (try sfby econs; try exact REL_LE; try refl); eauto;
+      try apply WF2; try sfby econs; eauto.
   { econs. inv REL_LE; try apply Time.bot_spec.
     cut (Time.le (View.rlx (View.unwrap (Some lhs)) loc)
                  (View.rlx (View.unwrap (Some rhs)) loc)).

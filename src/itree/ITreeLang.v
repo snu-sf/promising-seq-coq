@@ -1,4 +1,4 @@
-From ITree Require Export ITree Subevent.
+From ITree Require Export ITree Core.Subevent.
 
 From ITree Require Export
      ITree
@@ -6,10 +6,10 @@ From ITree Require Export
      Events.MapDefault
      Events.State
      Events.StateFacts
-     EqAxiom
+     Eq.EqAxiom
 .
 From ExtLib Require Export
-     Functor FunctorLaws
+     Structures.Functor Structures.FunctorLaws
      Structures.Maps
 .
 
@@ -23,7 +23,7 @@ Open Scope cat_scope.
 Open Scope monad_scope.
 Open Scope itree_scope.
 
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 
@@ -32,8 +32,8 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Export ITreeLib.
-Require Export Program.
+Require Export itree.ITreeLib.
+From Stdlib Require Export Program.
 
 Set Implicit Arguments.
 
@@ -188,6 +188,11 @@ Module ILang.
   .
 End ILang.
 
+(* Universe checking must be disabled here because ITree 5.x creates universe
+   variables for itree that are strictly above Set, while Configuration.v puts
+   Language.syntax inside IdentMap (PositiveMap) via sigT, creating a strict
+   universe constraint in the other direction. This cycle is benign since all
+   types involved (MemE.t, Const.t, etc.) are Set-sized. *)
 Definition lang (R: Type): Language.t ProgramEvent.t :=
   @Language.mk
     _
@@ -197,6 +202,9 @@ Definition lang (R: Type): Language.t ProgramEvent.t :=
     (@ILang.is_terminal _)
     (@ILang.step _)
 .
+
+(* ITree 5.x: register reflexive subevent instance for MemE.t *)
+#[export] Instance MemE_subevent : MemE.t -< MemE.t := fun _ e => e.
 
 From Paco Require Import paco.
 
@@ -239,7 +247,7 @@ Proof.
   { rewrite bind_tau in STEP. dependent destruction STEP.
     right. left. esplits; eauto. econs. eauto. }
   { rewrite bind_vis in STEP.
-    dependent destruction STEP; try by (right; left; esplits; eauto; econs; eauto).
+    dependent destruction STEP; try sfby (right; left; esplits; eauto; econs; eauto).
     right. right. splits; auto. f_equal. f_equal. extensionality v. ss. }
 Qed.
 
@@ -590,7 +598,7 @@ Section Interp.
 
   Definition effs := MemE.t.
 
-  Definition itr_code (blk: block) (le: lenv) :=
+  Definition itr_code (blk: block) (le: lenv) : itree MemE.t Const.t :=
     '(le1, _) <- (denote_block le blk);; Ret (le1 ret_reg).
 
   Definition eval_lang (body: block) : itree MemE.t Const.t :=

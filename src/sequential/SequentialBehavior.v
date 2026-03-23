@@ -1,6 +1,6 @@
-Require Import Bool.
-Require Import RelationClasses.
-Require Import Program.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import Program.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,15 +13,15 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
-Require Import List.
+From Stdlib Require Import List.
 
-Require Import SeqLib.
-Require Import Sequential.
-Require Import OracleFacts.
+Require Import sequential.SeqLib.
+Require Import sequential.Sequential.
+Require Import sequential.OracleFacts.
 
-Require Import SeqAux.
-Require Import SimAux.
-Require Import SeqAux.
+Require Import sequential.SeqAux.
+Require Import optimizer.SimAux.
+Require Import sequential.SeqAux.
 
 Set Implicit Arguments.
 

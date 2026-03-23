@@ -1,4 +1,4 @@
-From ITree Require Export ITree Subevent.
+From ITree Require Export ITree Core.Subevent.
 
 From ITree Require Export
      ITree
@@ -6,16 +6,16 @@ From ITree Require Export
      Events.MapDefault
      Events.State
      Events.StateFacts
-     EqAxiom
+     Eq.EqAxiom
 .
 From ExtLib Require Export
-     Functor FunctorLaws
+     Structures.Functor Structures.FunctorLaws
      Structures.Maps
 .
 
 Set Implicit Arguments.
 
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -27,24 +27,24 @@ From PromisingLib Require Import Axioms.
 
 From PromisingLib Require Import Event.
 
-Require Import Sequential.
-Require Import SimAux.
-Require Import SeqAux.
+Require Import sequential.Sequential.
+Require Import optimizer.SimAux.
+Require Import sequential.SeqAux.
 
-Require Import FoldN.
-Require Import Knowledge.
-Require Import Opt4.
-Require Import Opt4Sim.
+Require Import optimizer.FoldN.
+Require Import optimizer.Knowledge.
+Require Import optimizer.Opt4.
+Require Import optimizer.Opt4Sim.
 
-Require Import ITreeLangNotations.
-Require Import ITreeLangProof.
-Require Import ITreeLang.
+Require Import itree.ITreeLangNotations.
+Require Import itree.ITreeLangProof.
+Require Import itree.ITreeLang.
 
-Require Import RRforwarding.
-Require Import RRforwardingProof1.
+Require Import optimizer.RRforwarding.
+Require Import optimizer.RRforwardingProof1.
 
-Require Import SequentialITree.
-Require Export ITreeLib.
+Require Import itree.SequentialITree.
+Require Export itree.ITreeLib.
 
 
 
@@ -126,12 +126,12 @@ Section MATCH.
     unfold match_data in *. i. specialize MD with l0 id.
     unfold update.
     dest_ident x id.
-    - dest_loc l l0.
-      + apply VAL; eauto. rewrite H0; auto.
-      + rss. clarify.
-    - dest_loc l l0.
-      + rss. clarify.
-      + rss.
+    - dest_loc l l0;
+        try (apply VAL; eauto; rewrite H0; auto; fail);
+        try (rss; clarify; fail).
+    - dest_loc l l0;
+        try (rss; clarify; fail);
+        try rss.
   Qed.
 
   Lemma md_load_at:
@@ -238,9 +238,8 @@ Section MATCH.
       dest_loc l l0.
       { unfold bot in *; rss. }
       specialize MD with l0 id.
-      unfold update. dest_ident x id.
-      { rss. clarify. }
-      rss.
+      unfold update. dest_ident x id;
+        try (rss; clarify; fail); try rss.
     - rewrite RRfwd_write_ordf.
       unfold match_data in *; i.
       hexploit (ord_inv1 ordr). i. des.
@@ -248,16 +247,12 @@ Section MATCH.
         dest_loc l l0.
         { unfold bot in *; rss. }
         specialize MD with l0 id.
-        unfold update. dest_ident x id.
-        { rss. clarify. }
-        rss.
+        unfold update. dest_ident x id; try (rss; clarify; fail); try rss.
       + rewrite RRfwd_load_ord2 in H; auto.
         dest_loc l l0.
         { unfold bot in *; rss. }
         specialize MD with l0 id.
-        unfold update. dest_ident x id.
-        { rss. clarify. }
-        rss.
+        unfold update. dest_ident x id; try (rss; clarify; fail); try rss.
       + rewrite RRfwd_load_ord3 in H; auto.
         dest_loc l l0.
         all: unfold bot in *; rss.

@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,16 +13,16 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
 
-Require Import OrdStep.
-Require Import Writes.
+Require Import ldrfra.OrdStep.
+Require Import ldrfra.Writes.
 
 Set Implicit Arguments.
 
@@ -950,7 +950,7 @@ Module Stable.
           etrans; eauto. apply View.join_l.
         - apply View.join_spec.
           + etrans; eauto. apply View.join_l.
-          + apply View.join_spec; try by apply View.join_r.
+          + apply View.join_spec; try sfby apply View.join_r.
             etrans; [|apply View.join_l]. apply WF1.
       }
       hexploit write_tview_stable; try exact H; eauto; try apply WF1.
@@ -962,7 +962,7 @@ Module Stable.
       revert MSG. unfold TView.write_released. condtac; ss. i. inv MSG.
       unfold LocFun.add. condtac; ss.
       destruct (classic (L loc)).
-      - des; ss. condtac; try by destruct ord; ss.
+      - des; ss. condtac; try sfby destruct ord; ss.
         rewrite View.le_join_r; cycle 1.
         { etrans; [|apply View.join_l]. apply RELEASEDM. ss. }
         ii. ss. revert GET.
@@ -977,7 +977,7 @@ Module Stable.
           inv H. eapply CUR; eauto.
       - guardH LOC. inv STABLE_TVIEW1.
         condtac; ss; repeat apply join_stable_view;
-          (try by apply singleton_ur_stable_view);
+          (try sfby apply singleton_ur_stable_view);
           try eapply write_stable_view; eauto; try apply WF1.
         + apply Memory.unwrap_closed_opt_view; ss. apply MEM1.
         + apply Memory.unwrap_closed_opt_view; ss. apply MEM1.
@@ -1078,7 +1078,7 @@ Module Stable.
             apply TimeMap.join_spec.
             { apply TimeMap.join_l. }
             { etrans; [|apply TimeMap.join_r]. apply WF1. }
-        + rewrite View.le_join_l; try by apply View.bot_spec. ss.
+        + rewrite View.le_join_l; try sfby apply View.bot_spec. ss.
       - unfold TView.write_fence_sc. repeat (condtac; ss).
         + eapply join_stable_timemap; ss.
           apply stable_view_stable_timemap.

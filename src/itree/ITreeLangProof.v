@@ -1,4 +1,4 @@
-From ITree Require Export ITree Subevent.
+From ITree Require Export ITree Core.Subevent.
 
 From ITree Require Export
      ITree
@@ -6,7 +6,7 @@ From ITree Require Export
      Events.MapDefault
      Events.State
      Events.StateFacts
-     EqAxiom
+     Eq.EqAxiom
 .
 Open Scope itree_scope.
 
@@ -14,9 +14,7 @@ Set Implicit Arguments.
 
 From sflib Require Import sflib.
 
-Require Import ITreeLang.
-
-
+Require Import itree.ITreeLang.
 
 Section Proof.
 
@@ -52,62 +50,62 @@ Section Proof.
   Lemma denote_inst_skip
         le
     :
-      denote_inst le (Inst.skip) = tau;; Ret (le, ()).
+      @denote_inst MemE.t MemE_subevent le (Inst.skip) = tau;; Ret (le, ()).
   Proof. ss. Qed.
 
   Lemma denote_inst_assign
         lhs rhs le
     :
-      denote_inst le (Inst.assign lhs rhs) =
+      @denote_inst MemE.t MemE_subevent le (Inst.assign lhs rhs) =
       let r := denote_expr le rhs in tau;; Ret (update lhs r le, ()).
   Proof. ss. Qed.
 
   Lemma denote_inst_load
         lhs loc ord le
     :
-      denote_inst le (Inst.load lhs loc ord) =
+      @denote_inst MemE.t MemE_subevent le (Inst.load lhs loc ord) =
       r <- trigger (MemE.read loc ord);; Ret (update lhs r le, ()).
   Proof. ss. Qed.
 
   Lemma denote_inst_store
         loc rhs ord le
     :
-      denote_inst le (Inst.store loc rhs ord) =
+      @denote_inst MemE.t MemE_subevent le (Inst.store loc rhs ord) =
       let r := denote_expr le rhs in trigger (MemE.write loc r ord);; Ret (le, ()).
   Proof. ss. Qed.
 
   Lemma denote_inst_update
         lhs loc rmw ord1 ord2 le
     :
-      denote_inst le (Inst.update lhs loc rmw ord1 ord2) =
+      @denote_inst MemE.t MemE_subevent le (Inst.update lhs loc rmw ord1 ord2) =
       r <- trigger (MemE.update loc rmw ord1 ord2);; Ret (update lhs r le, ()).
   Proof. ss. Qed.
 
   Lemma denote_inst_fence
         ord1 ord2 le
     :
-      denote_inst le (Inst.fence ord1 ord2) =
+      @denote_inst MemE.t MemE_subevent le (Inst.fence ord1 ord2) =
       trigger (MemE.fence ord1 ord2);; Ret (le, ()).
   Proof. ss. Qed.
 
   Lemma denote_inst_syscall
         lhs es le
     :
-      denote_inst le (Inst.syscall lhs es) =
+      @denote_inst MemE.t MemE_subevent le (Inst.syscall lhs es) =
       let args := denote_exprs le es in r <- trigger (MemE.syscall args);; Ret (update lhs r le, ()).
   Proof. ss. Qed.
 
   Lemma denote_inst_abort
         le
     :
-      denote_inst le (Inst.abort) =
+      @denote_inst MemE.t MemE_subevent le (Inst.abort) =
       trigger MemE.abort;; Ret (le, ()).
   Proof. ss. Qed.
 
   Lemma denote_inst_choose
         lhs le
     :
-      denote_inst le (Inst.choose lhs) =
+      @denote_inst MemE.t MemE_subevent le (Inst.choose lhs) =
       v <- trigger MemE.choose;; Ret (update lhs v le, ()).
   Proof. ss. Qed.
 
@@ -116,45 +114,41 @@ Section Proof.
   Lemma denote_stmt_inst
         i le
     :
-      denote_stmt le (inst i) =
-      denote_inst le i.
+      @denote_stmt MemE.t MemE_subevent le (inst i) =
+      @denote_inst MemE.t MemE_subevent le i.
   Proof. ss. Qed.
 
   Lemma denote_block_nil
         le
     :
-      denote_block le nil = Ret (le, ()).
+      @denote_block MemE.t MemE_subevent le nil = Ret (le, ()).
   Proof. ss. Qed.
 
   Lemma denote_block_cons
         s b le
     :
-      denote_block le (cons s b) =
-      '(le1, _) <- denote_stmt le s;; denote_block le1 b.
+      @denote_block MemE.t MemE_subevent le (cons s b) =
+      '(le1, _) <- @denote_stmt MemE.t MemE_subevent le s;; @denote_block MemE.t MemE_subevent le1 b.
   Proof. ss. Qed.
 
   Lemma denote_add_block
         b1 b2 l0
     :
-      denote_block l0 (add_block b1 b2) =
-      '(l1, _) <- (denote_block l0 b1);; (denote_block l1 b2).
+      @denote_block MemE.t MemE_subevent l0 (add_block b1 b2) =
+      '(l1, _) <- (@denote_block MemE.t MemE_subevent l0 b1);; (@denote_block MemE.t MemE_subevent l1 b2).
   Proof.
-    do 3 revert1. induction b1 using block_ind2; i.
-    - ss. rewrite denote_block_nil. grind.
-    - ss. rewrite ! denote_block_cons. grind.
-    - ss. rewrite ! denote_block_cons. grind.
-    - ss. rewrite ! denote_block_cons. grind.
+    do 3 revert1. induction b1 using block_ind2; i; ss; grind.
   Qed.
 
   Lemma denote_stmt_ite
         c b1 b2 le
     :
-      denote_stmt le (ite c b1 b2) =
+      @denote_stmt MemE.t MemE_subevent le (ite c b1 b2) =
       let rc := denote_expr le c in
       tau;;
       match is_zero rc with
-      | Some true => denote_block le b2
-      | Some false => denote_block le b1
+      | Some true => @denote_block MemE.t MemE_subevent le b2
+      | Some false => @denote_block MemE.t MemE_subevent le b1
       | None => trigger MemE.abort;; Ret (le, ())
       end.
   Proof. ss. Qed.
@@ -162,11 +156,11 @@ Section Proof.
   Lemma denote_stmt_ite2
         c b1 b2 le
     :
-      denote_stmt le (ite c b1 b2) =
+      @denote_stmt MemE.t MemE_subevent le (ite c b1 b2) =
       let rc := denote_expr le c in
       match is_zero rc with
-      | Some true => denote_block le (cons Inst.skip b2)
-      | Some false => denote_block le (cons Inst.skip b1)
+      | Some true => @denote_block MemE.t MemE_subevent le (cons Inst.skip b2)
+      | Some false => @denote_block MemE.t MemE_subevent le (cons Inst.skip b1)
       | None => tau;; trigger MemE.abort;; Ret (le, ())
       end.
   Proof.
@@ -188,7 +182,7 @@ Section Proof.
   Lemma unfold_denote_while
         c wb le
     :
-      denote_stmt le (while c wb) =
+      @denote_stmt MemE.t MemE_subevent le (while c wb) =
       while_itree le
                   (fun lu : lunit =>
                      let le0 := fst lu in
@@ -196,7 +190,7 @@ Section Proof.
                      tau;; match is_zero cr with
                            | Some true => ret (inr (le0, ()))
                            | Some false =>
-                             r <- denote_block le0 wb;; ret (inl r)
+                             r <- @denote_block MemE.t MemE_subevent le0 wb;; ret (inl r)
                            | None => trigger MemE.abort;; Ret (inr (le0, ()))
                            end).
   Proof. ss. Qed.
@@ -204,22 +198,27 @@ Section Proof.
   Lemma denote_stmt_while
         c wb le
     :
-      denote_stmt le (while c wb) =
+      @denote_stmt MemE.t MemE_subevent le (while c wb) =
       x_ <- (let rc := denote_expr le c in
                              tau;;
                              match is_zero rc with
                              | Some true => ret (inr (le, ()))
                              | Some false =>
-                               r <- denote_block le wb;; ret (inl r)
+                               r <- @denote_block MemE.t MemE_subevent le wb;; ret (inl r)
                              | None => trigger MemE.abort;; Ret (inr (le, ()))
                              end);;
             (let lr := x_ in
              match lr with
-             | inl (le1, _) => tau;; denote_stmt le1 (while c wb)
+             | inl (le1, _) => tau;; @denote_stmt MemE.t MemE_subevent le1 (while c wb)
              | inr r => Ret r
              end).
   Proof.
-    ss. rewrite unfold_denote_while.
+    ss.
+    match goal with
+    | [|- ?lhs = _ ] =>
+      change lhs with (@denote_stmt MemE.t MemE_subevent le (while c wb))
+    end.
+    rewrite unfold_denote_while.
     unfold while_itree.
     match goal with
     | [|- ITree.iter ?f ?i = _ ] =>
@@ -237,17 +236,17 @@ Section Proof.
                         (tau;; match is_zero (denote_expr le c) with
                                | Some true => ret (inr (le, ()))
                                | Some false =>
-                                 r <- denote_block le wb;; ret (inl r)
+                                 r <- @denote_block MemE.t MemE_subevent le wb;; ret (inl r)
                                | None => trigger MemE.abort;; Ret (inr (le, ()))
                                end);;
                         match lr with
                         | inl l =>
-                          tau;; denote_stmt (fst l) (while c wb)
+                          tau;; @denote_stmt MemE.t MemE_subevent (fst l) (while c wb)
                         | inr r => Ret r
                         end)
     end.
     { eapply ext_bind; ss.
-      i. destruct x; ss. rewrite unfold_denote_while. unfold while_itree. grind.
+      i. destruct x; ss. grind.
       f_equal. destruct p. destruct u. ss.
     }
     rewrite A; clear A. eapply ext_bind; eauto.
@@ -260,7 +259,7 @@ Section Proof.
         b1 b2 l0
     :
       itr_code (add_block b1 b2) l0 =
-      '(l1, _) <- (denote_block l0 b1);;
+      '(l1, _) <- (@denote_block MemE.t MemE_subevent l0 b1);;
       '(l2, _) <- (denote_block l1 b2);;
       Ret (l2 ret_reg).
   Proof.
@@ -270,12 +269,12 @@ Section Proof.
   Lemma denote_stmt_block_cons
         s l
     :
-      denote_stmt l s = denote_block l (cons s nil).
+      @denote_stmt MemE.t MemE_subevent l s = @denote_block MemE.t MemE_subevent l (cons s nil).
   Proof.
     rewrite denote_block_cons.
     match goal with
     | [|- ?a = _ ] =>
-      replace a with (x <- denote_stmt l s;; Ret x) at 1 end.
+      replace a with (x <- @denote_stmt MemE.t MemE_subevent l s;; Ret x) at 1 end.
     2:{ grind. }
     apply ext_bind; auto.
     grind. destruct u. auto.
@@ -284,11 +283,11 @@ Section Proof.
   Lemma denote_stmt_while2
         c wb le
     :
-      denote_stmt le (while c wb) =
+      @denote_stmt MemE.t MemE_subevent le (while c wb) =
       let rc := denote_expr le c in
       match is_zero rc with
-      | Some true => denote_block le (cons Inst.skip nil)
-      | Some false => denote_block le (add_block (cons Inst.skip wb) (cons Inst.skip (cons (while c wb) nil)))
+      | Some true => @denote_block MemE.t MemE_subevent le (cons Inst.skip nil)
+      | Some false => @denote_block MemE.t MemE_subevent le (add_block (cons Inst.skip wb) (cons Inst.skip (cons (while c wb) nil)))
       | None => tau;; trigger MemE.abort;; Ret (le, ())
       end.
   Proof.
@@ -308,11 +307,11 @@ Section Proof.
   Lemma denote_stmt_while3
         c wb le
     :
-      denote_stmt le (while c wb) =
+      @denote_stmt MemE.t MemE_subevent le (while c wb) =
       tau;;
       match is_zero (denote_expr le c) with
-      | Some true => denote_block le nil
-      | Some false => denote_block le (add_block wb (cons Inst.skip (cons (while c wb) nil)))
+      | Some true => @denote_block MemE.t MemE_subevent le nil
+      | Some false => @denote_block MemE.t MemE_subevent le (add_block wb (cons Inst.skip (cons (while c wb) nil)))
       | None => trigger MemE.abort;; Ret (le, ())
       end.
   Proof.

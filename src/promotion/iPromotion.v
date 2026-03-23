@@ -9,25 +9,25 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Behavior.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Behavior.
 
-Require Import ITreeLang.
+Require Import itree.ITreeLang.
 
-Require Import PromiseConsistent.
-Require Import SimpleSimulation.
+Require Import prop.PromiseConsistent.
+Require Import prop.SimpleSimulation.
 
-Require Import iPromotionDef.
-Require Import SimCommon.
-Require Import iSimThreadPromotion.
-Require Import iSimThreadOther.
+Require Import promotion.iPromotionDef.
+Require Import promotion.SimCommon.
+Require Import promotion.iSimThreadPromotion.
+Require Import promotion.iSimThreadOther.
 
 Set Implicit Arguments.
 

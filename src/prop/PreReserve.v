@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,22 +13,22 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Pred.
-Require Import Trace.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import prop.Pred.
+Require Import prop.Trace.
 
-Require Import MemoryMerge.
-Require Import ReorderCancel.
-Require Import MemoryProps.
-Require Import OrderedTimes.
-Require Import Cover.
-Require Import Mapping.
+Require Import prop.MemoryMerge.
+Require Import prop.ReorderCancel.
+Require Import prop.MemoryProps.
+Require Import prop.OrderedTimes.
+Require Import prop.Cover.
+Require Import prop.Mapping.
 
 Set Implicit Arguments.
 
@@ -125,7 +125,7 @@ Section UNATTACHABLE.
   Proof.
     extensionality loc0. extensionality ts0.
     exploit Memory.lower_get0; eauto. i. des.
-    apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i.
+    apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i.
     { inv H. erewrite Memory.lower_o in MSG; eauto. des_ifs.
       { ss. des; clarify. econs; eauto. }
       { econs; eauto. }
@@ -141,7 +141,7 @@ Section UNATTACHABLE.
     extensionality loc0. extensionality ts0.
     exploit split_succeed_wf; eauto. i. des.
     exploit Memory.split_get0; eauto. i. des.
-    apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i.
+    apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i.
     { inv H. erewrite Memory.split_o in MSG; eauto. des_ifs.
       { ss. des; clarify. econs; eauto. }
       { ss. des; clarify. econs; eauto. etrans; eauto. left. auto. }
@@ -168,7 +168,7 @@ Section UNATTACHABLE.
     extensionality loc0. extensionality ts0.
     exploit add_succeed_wf; eauto. i.  des.
     exploit Memory.add_get0; eauto. i. des.
-    apply Coq.Logic.PropExtensionality.propositional_extensionality. split; i.
+    apply Stdlib.Logic.PropExtensionality.propositional_extensionality. split; i.
     { inv H. erewrite Memory.add_o in MSG; eauto. des_ifs.
       { ss. des; clarify. right. splits; auto. }
       { left. econs; eauto. }
@@ -476,7 +476,7 @@ Section LIFT.
       { inv LOCAL1. exploit step_lifting_is_racy; eauto. i. des.
         esplits; eauto. econs 2; eauto. econs; eauto.
       }
-      { inv LOCAL1; try by (esplits; eauto; econs 2; eauto; econs; eauto).
+      { inv LOCAL1; try sfby (esplits; eauto; econs 2; eauto; econs; eauto).
         exploit step_lifting_is_racy; eauto. i. des.
         esplits; eauto. econs 2; eauto. econs; eauto.
       }
@@ -727,7 +727,7 @@ Proof.
   destruct kind; ss.
 Qed.
 
-Require Import MemoryFacts.
+Require Import lang.MemoryFacts.
 
 Lemma write_na_needed_spaces
       ts prom0 mem0 loc from to val prom1 mem1 msgs kinds kind
@@ -769,7 +769,7 @@ Proof.
     + rewrite <- COVERED0. eauto.
     + rewrite <- COVERED0. eauto.
   - exists ((loc, (from', to')) :: l). splits; ss; i.
-    + des; try by (inv IN; eauto).
+    + des; try sfby (inv IN; eauto).
       exploit L; eauto. i. des; eauto.
     + hexploit WRITENOTIN; eauto. ii. apply H.
       rewrite COVERED0. ii. apply H0. des; eauto.
@@ -1050,7 +1050,7 @@ Lemma step_finte_write_to (e: ThreadEvent.t)
       (<<EVENT: write_not_to (fun loc ts => ~ List.In (loc, ts) l) e>>) /\
       (<<TIMES: List.Forall (fun locts => times (fst locts) (snd locts)) l>>).
 Proof.
-  destruct e; try by (exists []; esplits; eauto); ss.
+  destruct e; try sfby (exists []; esplits; eauto); ss.
   { exists [(loc, to)]. esplits; ss.
     { des_ifs. ii. eapply H. auto. }
     { econs; ss. des. auto. }

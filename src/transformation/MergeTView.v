@@ -5,15 +5,15 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
 
 Set Implicit Arguments.
 
@@ -28,7 +28,7 @@ Lemma read_read_tview
     (TView.read_tview tview0 loc ts released ord).
 Proof.
   econs; aggrtac;
-    (try by apply WF0);
+    (try sfby apply WF0);
     repeat condtac; aggrtac.
 Qed.
 
@@ -58,7 +58,7 @@ Lemma write_write_tview
     (TView.write_tview tview0 sc0 loc ts2 ord).
 Proof.
   econs; repeat (try condtac; aggrtac).
-  all: try by apply WF0.
+  all: try sfby apply WF0.
 Qed.
 
 Lemma read_fence_read_fence_tview
@@ -70,7 +70,7 @@ Lemma read_fence_read_fence_tview
     (TView.read_fence_tview tview0 ord).
 Proof.
   econs; aggrtac;
-    (try by apply WF0).
+    (try sfby apply WF0).
   repeat condtac; viewtac.
 Qed.
 
@@ -95,7 +95,7 @@ Lemma write_fence_write_fence_tview
     (TView.write_fence_tview tview0 sc0 ord).
 Proof.
   econs; aggrtac;
-    (try by apply WF0);
+    (try sfby apply WF0);
     (repeat condtac; aggrtac);
     rewrite <- ? View.join_r; viewtac.
   - apply write_fence_write_fence_sc; auto.

@@ -1,6 +1,6 @@
 Set Implicit Arguments.
 
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -11,10 +11,10 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Axioms.
 
 From PromisingLib Require Import Event.
-Require Export Program.
+From Stdlib Require Export Program.
 
-Require Import Sequential.
-Require Import FlagAux.
+Require Import sequential.Sequential.
+Require Import sequential.FlagAux.
 
 
 
@@ -856,28 +856,28 @@ Section REDSTEP.
       2:{ econs; ss; eauto. ii. rewrite ACC. split; i; des; clarify; eauto. clarify. }
       2:{ econs; ss; eauto. ii. rewrite ACC. split; i; des; clarify; eauto. clarify. }
       i. unfold Oracle.wf_output in WFO. des. clarify.
-      destruct o; ss. destruct out_access, out_acquire, out_release; ss; clearb; try by contra.
+      destruct o; ss. destruct out_access, out_acquire, out_release; ss; clearb; try sfby contra.
       2:{ hexploit UPDATE0. rewrite ACC; ss. i; clarify. }
       do 2 eexists. econs; ss. econs; eauto. econs; eauto. econs; eauto. econs; eauto. econs.
     - destruct p. eexists (SeqEvent.mk_input (Some (t, _, _, _)) None None). splits.
       2:{ econs; ss; eauto. ii. rewrite ACC. split; i; des; clarify; eauto. clarify. }
       2:{ econs; ss; eauto. ii. rewrite ACC. split; i; des; clarify; eauto. clarify. }
       i. unfold Oracle.wf_output in WFO. des. clarify.
-      destruct o; ss. destruct out_access, out_acquire, out_release; ss; clearb; try by contra.
+      destruct o; ss. destruct out_access, out_acquire, out_release; ss; clearb; try sfby contra.
       2:{ hexploit UPDATE0. rewrite ACC; ss. i; clarify. }
       do 2 eexists. econs; ss. econs; eauto. econs; eauto. econs; eauto. econs; eauto.
     - eexists (SeqEvent.mk_input None None (Some _)). splits.
       2:{ econs; ss; eauto. ii. split; i; des; clarify; eauto. clarify. }
       2:{ econs; ss; eauto. ii. split; i; des; clarify; eauto. clarify. }
       i. unfold Oracle.wf_output in WFO. des. clarify.
-      destruct o; ss. destruct out_access, out_acquire, out_release; ss; clearb; try by contra.
+      destruct o; ss. destruct out_access, out_acquire, out_release; ss; clearb; try sfby contra.
       { hexploit UPDATE; auto. rewrite ACC; ss. }
       do 2 eexists. econs; ss. econs; eauto. econs; eauto. econs; eauto. econs; eauto.
     - eexists (SeqEvent.mk_input None None None). splits.
       2:{ econs; ss; eauto. ii. split; i; des; clarify; eauto. clarify. }
       2:{ econs; ss; eauto. ii. split; i; des; clarify; eauto. clarify. }
       i. unfold Oracle.wf_output in WFO. des. clarify.
-      destruct o; ss. destruct out_access, out_acquire, out_release; ss; clearb; try by contra.
+      destruct o; ss. destruct out_access, out_acquire, out_release; ss; clearb; try sfby contra.
       { hexploit UPDATE; auto. rewrite ACC; ss. }
       do 2 eexists. econs; ss. econs; eauto. econs; eauto. econs; eauto.
   Qed.
@@ -898,7 +898,7 @@ Section ORACLE.
   Proof.
     i. unfold Oracle.wf_input in INPUT0. des. unfold ProgramEvent.le in EVENT.
     clear UPDATE RELEASE RELEASE0.
-    des_ifs; destruct (Oracle.in_acquire i0); ss; try by contra.
+    des_ifs; destruct (Oracle.in_acquire i0); ss; try sfby contra.
     - hexploit ACQUIRE0; auto; i. destruct ord; ss.
     - des; clarify. hexploit ACQUIRE0; auto; i. destruct ordr0; ss.
     - hexploit ACQUIRE0; auto; i. destruct ordw; destruct ordr; ss.
@@ -914,7 +914,7 @@ Section ORACLE.
   Proof.
     i. unfold Oracle.wf_input in INPUT0. des. unfold ProgramEvent.le in EVENT.
     clear ACQUIRE ACQUIRE0 RELEASE RELEASE0.
-    des_ifs; destruct (Oracle.in_access i0); ss; clarify; try by contra.
+    des_ifs; destruct (Oracle.in_access i0); ss; clarify; try sfby contra.
     all: hexploit UPDATE; i; des; hexploit H0; i; des; ss; eauto.
   Qed.
 
@@ -928,7 +928,7 @@ Section ORACLE.
   Proof.
     i. unfold Oracle.wf_input in INPUT0. des. unfold ProgramEvent.le in EVENT.
     clear ACQUIRE ACQUIRE0 RELEASE RELEASE0.
-    des_ifs; destruct (Oracle.in_access i0); ss; clarify; try by contra.
+    des_ifs; destruct (Oracle.in_access i0); ss; clarify; try sfby contra.
     1,5,6,7: hexploit UPDATE; i; des; hexploit H; eauto.
     - hexploit UPDATE. i; des. hexploit H0; eauto. i; des. clarify; eauto.
     - des; clarify. hexploit UPDATE. i; des. hexploit H0; eauto. i; des. clarify; eauto.

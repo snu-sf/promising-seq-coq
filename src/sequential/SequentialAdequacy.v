@@ -7,19 +7,19 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
-Require Import Configuration.
-Require Import Behavior.
+Require Import lang.Configuration.
+Require Import lang.Behavior.
 
-Require Import NoMix.
-Require Import DelayedSimulation.
-Require Import DelayedStep.
-Require Import DelayedAdequacy.
-Require Import NALoc.
-Require Import SeqLiftSim.
-Require Import Sequential.
-Require Import SequentialBehavior.
-Require Import SequentialRefinement.
-Require Import Program.
+Require Import sequential.NoMix.
+Require Import sequential.DelayedSimulation.
+Require Import sequential.DelayedStep.
+Require Import sequential.DelayedAdequacy.
+Require Import sequential.NALoc.
+Require Import sequential.SeqLiftSim.
+Require Import sequential.Sequential.
+Require Import sequential.SequentialBehavior.
+Require Import sequential.SequentialRefinement.
+From Stdlib Require Import Program.
 
 Set Implicit Arguments.
 

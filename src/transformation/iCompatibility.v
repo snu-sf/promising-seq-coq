@@ -1,5 +1,5 @@
-Require Import Bool.
-Require Import List.
+From Stdlib Require Import Bool.
+From Stdlib Require Import List.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -9,26 +9,26 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import FulfillStep.
+Require Import prop.FulfillStep.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
-Require Import SimThread.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
+Require Import transformation.SimThread.
 
-Require Import Program.
+From Stdlib Require Import Program.
 
-Require Import ITreeLang.
-Require Import ITreeLib.
+Require Import itree.ITreeLang.
+Require Import itree.ITreeLib.
 
 Set Implicit Arguments.
 
@@ -314,7 +314,7 @@ Proof.
       - econs; eauto.
     }
     { right. subst. esplits; eauto. }
-    inv STEP_TGT; try by inv STEP; inv STATE.
+    inv STEP_TGT; try sfby inv STEP; inv STATE.
     inv STEP; ss.
     exploit sim_local_promise; eauto. i. des.
     right. esplits.
@@ -333,7 +333,7 @@ Proof.
       2: { eapply f_equal with (f:=observe) in H. ss. }
       2: { eapply f_equal with (f:=observe) in H. ss. }
       rewrite bind_ret_l in H.
-      exploit TERMINAL; try by econs. i. des.
+      exploit TERMINAL; try sfby econs. i. des.
       - left.
         unfold Thread.steps_failure in *. des.
         destruct e2, e3.
@@ -352,7 +352,7 @@ Proof.
         subst.
         exploit SIM2; eauto. intros x0. eapply GF in x0.
         exploit x0; try apply SC0; eauto using Memory.future_future_weak.
-        i. ss. des. exploit TERMINAL0; try by econs.
+        i. ss. des. exploit TERMINAL0; try sfby econs.
         { econs. eauto. }
         i. des.
         + left.
@@ -384,7 +384,7 @@ Proof.
         + ss.
     }
     hexploit thread_step_deseq; eauto. i. des; clarify.
-    + exploit TERMINAL; try by econs. i. des.
+    + exploit TERMINAL; try sfby econs. i. des.
       * left.
         unfold Thread.steps_failure in *. des.
         destruct e2, e3. ss.

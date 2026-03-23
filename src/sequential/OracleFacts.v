@@ -1,7 +1,7 @@
-Require Import Bool.
-Require Import RelationClasses.
-Require Import List.
-Require Import Program.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import List.
+From Stdlib Require Import Program.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -15,8 +15,8 @@ From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
 
-Require Import Sequential.
-Require Import SeqLib.
+Require Import sequential.Sequential.
+Require Import sequential.SeqLib.
 
 Set Implicit Arguments.
 
@@ -780,6 +780,6 @@ Definition oracle_input_of_event (e: ProgramEvent.t) (m: SeqMemory.t): Oracle.in
 Lemma oracle_input_of_event_wf e m:
   Oracle.wf_input e (oracle_input_of_event e m).
 Proof.
-  unfold Oracle.wf_input. splits; ss; try by des_ifs.
+  unfold Oracle.wf_input. splits; ss; try sfby des_ifs.
   ss. des_ifs; split; i; des; inv H; eauto.
 Qed.

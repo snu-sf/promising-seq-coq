@@ -1,6 +1,6 @@
 Set Implicit Arguments.
 
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 
@@ -11,13 +11,13 @@ From PromisingLib Require Import Axioms.
 
 From PromisingLib Require Import Event.
 
-Require Import FoldN.
-Require Import Knowledge.
-Require Import Opt2.
+Require Import optimizer.FoldN.
+Require Import optimizer.Knowledge.
+Require Import optimizer.Opt2.
 
-Require Import ITreeLang.
+Require Import itree.ITreeLang.
 
-Require Import DeadStoreElim.
+Require Import optimizer.DeadStoreElim.
 
 
 

@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,21 +13,21 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Single.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import prop.Single.
 
-Require Import SimMemory.
-Require Import MemoryProps.
+Require Import transformation.SimMemory.
+Require Import prop.MemoryProps.
 
-Require Import Behavior.
-Require Import Program.
+Require Import lang.Behavior.
+From Stdlib Require Import Program.
 
 Set Implicit Arguments.
 
@@ -603,7 +603,7 @@ Module JThread.
   .
   Proof.
     inv STEP.
-    - esplits; eauto; try by refl.
+    - esplits; eauto; try sfby refl.
     - eapply step_future; eauto.
   Qed.
 
@@ -629,9 +629,9 @@ Module JThread.
   .
   Proof.
     ginduction STEPS; i.
-    - splits; eauto; try by refl.
+    - splits; eauto; try sfby refl.
     - exploit step_future; eauto. i. des.
-      exploit IHSTEPS; eauto. i. des. splits; auto; try by (etrans; eauto).
+      exploit IHSTEPS; eauto. i. des. splits; auto; try sfby (etrans; eauto).
   Qed.
 
   Inductive reserve_step (views: Loc.t -> Time.t -> list View.t)
@@ -690,9 +690,9 @@ Module JThread.
   .
   Proof.
     ginduction STEPS; i.
-    - splits; eauto; try by refl.
+    - splits; eauto; try sfby refl.
     - inv H. exploit step_future; eauto. i. des.
-      exploit IHSTEPS; eauto. i. des. splits; auto; try by (etrans; eauto).
+      exploit IHSTEPS; eauto. i. des. splits; auto; try sfby (etrans; eauto).
   Qed.
 
   Lemma rtc_cancel_step_future lang th0 th1 views
@@ -715,9 +715,9 @@ Module JThread.
   .
   Proof.
     ginduction STEPS; i.
-    - splits; eauto; try by refl.
+    - splits; eauto; try sfby refl.
     - inv H. exploit step_future; eauto. i. des.
-      exploit IHSTEPS; eauto. i. des. splits; auto; try by (etrans; eauto).
+      exploit IHSTEPS; eauto. i. des. splits; auto; try sfby (etrans; eauto).
   Qed.
 
 End JThread.

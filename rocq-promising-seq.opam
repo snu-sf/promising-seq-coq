@@ -1,0 +1,34 @@
+opam-version: "2.0"
+synopsis: "Rocq formalization of the Promising-NA semantics and the SEQ model"
+maintainer: ["yeji.han@sf.snu.ac.kr"]
+authors: [
+  "Minki Cho <minki.cho@sf.snu.ac.kr>"
+  "Sung-Hwan Lee <sunghwan.lee@sf.snu.ac.kr>"
+  "Jeehoon Kang <jeehoon.kang@sf.snu.ac.kr>"
+  "Chung-Kil Hur <gil.hur@sf.snu.ac.kr>"
+  "Ori Lahav <ori.lahav@tau.ac.il>"
+  "Viktor Vafeiadis <viktor@mpi-sws.org>"
+  "Derek Dreyer <dreyer@mpi-sws.org>"
+]
+license: "BSD-2-Clause"
+homepage: "https://github.com/snu-sf/promising-seq-coq"
+bug-reports: "https://github.com/snu-sf/promising-seq-coq/issues"
+dev-repo: "git+https://github.com/snu-sf/promising-seq-coq.git"
+depends: [
+  "coq-core" {>= "9.0"}
+  "rocq-stdlib"
+  "coq-sflib" {>= "2.1.0"}
+  "coq-paco" {>= "4.2.3"}
+  "coq-promising-lib" {>= "2.1.0"}
+  "coq-ext-lib" {>= "0.13.0"}
+  "coq-itree" {>= "5.2.0"}
+  "dune" {>= "3.21"}
+]
+pin-depends: [
+  ["coq-promising-lib.2.1.0"
+   "git+https://github.com/snu-sf/promising-lib.git#2.1.0"]
+]
+build: [
+  ["dune" "subst"] {dev}
+  ["dune" "build" "-p" name "-j" jobs "@install"]
+]

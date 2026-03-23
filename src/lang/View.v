@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import RelationClasses.
-Require Import Coq.Lists.ListDec Decidable.
+From Stdlib Require Import Lia.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import Lists.ListDec Decidable.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -11,7 +11,7 @@ From PromisingLib Require Import DataStructure.
 From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Loc.
 
-Require Import Time.
+Require Import lang.Time.
 
 Set Implicit Arguments.
 

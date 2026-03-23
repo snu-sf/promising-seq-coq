@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,11 +13,11 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
 
 Set Implicit Arguments.
 
@@ -148,7 +148,7 @@ Module ThreadEvent.
     { is_normal e } + { ~ is_normal e }.
   Proof.
     unfold is_normal, is_reservation_event, is_cancel, is_reserve.
-    des_ifs; ss; (try by (left; ii; des; ss)); try by (right; ii; eauto).
+    des_ifs; ss; (try sfby (left; ii; des; ss)); try sfby (right; ii; eauto).
   Defined.
 
   Lemma reservation_event_silent te
@@ -438,7 +438,7 @@ Module Local.
       + inv PROMISES0. inv SPLIT. auto.
       + inv PROMISES0. inv LOWER. auto.
       + econs.
-    - by inv PROMISE.
+    - sfby inv PROMISE.
   Qed.
 
   Lemma read_step_future
@@ -483,7 +483,7 @@ Module Local.
     { inv WRITE. eapply Memory.promise_op. eauto. }
     s. i. des.
     exploit Memory.write_future; try apply WRITE; eauto. i. des.
-    exploit Memory.write_get2; try apply WRITE; eauto; try by viewtac. i. des.
+    exploit Memory.write_get2; try apply WRITE; eauto; try sfby viewtac. i. des.
     splits; eauto.
     - apply TViewFacts.write_tview_incr. auto.
     - refl.
@@ -610,13 +610,13 @@ Module Local.
     <<SC_FUTURE: TimeMap.le sc1 sc2>> /\
     <<MEM_FUTURE: Memory.future mem1 mem2>>.
   Proof.
-    inv STEP; try by (esplits; eauto; try refl).
+    inv STEP; try sfby (esplits; eauto; try refl).
     - exploit read_step_future; eauto. i. des.
       esplits; eauto; try refl.
-    - exploit write_step_future; eauto; try by econs. i. des.
+    - exploit write_step_future; eauto; try sfby econs. i. des.
       esplits; eauto; try refl.
     - exploit read_step_future; eauto. i. des.
-      exploit write_step_future; eauto; try by econs. i. des.
+      exploit write_step_future; eauto; try sfby econs. i. des.
       esplits; eauto. etrans; eauto.
     - exploit fence_step_future; eauto. i. des.
       esplits; eauto; try refl.
@@ -745,7 +745,7 @@ Module Local.
     <<DISJOINT2: disjoint lc2 lc>> /\
     <<WF: wf lc mem2>>.
   Proof.
-    inv STEP; try by (esplits; eauto).
+    inv STEP; try sfby (esplits; eauto).
     - exploit read_step_disjoint; eauto.
     - exploit write_step_disjoint; eauto.
     - exploit read_step_future; eauto. i. des.
@@ -776,7 +776,7 @@ Module Local.
         (LOC: ~ ThreadEvent.is_accessing_loc l e):
     forall to, Memory.get l to lc1.(promises) = Memory.get l to lc2.(promises).
   Proof.
-    inv STEP; ss; try by inv LOCAL.
+    inv STEP; ss; try sfby inv LOCAL.
     - i. inv LOCAL. s.
       erewrite <- Memory.write_get_diff_promise; eauto.
     - i. inv LOCAL1. inv LOCAL2. s.
@@ -792,7 +792,7 @@ Module Local.
         (LOC: ~ ThreadEvent.is_accessing_loc l e):
     forall to, Memory.get l to mem1 = Memory.get l to mem2.
   Proof.
-    inv STEP; ss; try by inv LOCAL.
+    inv STEP; ss; try sfby inv LOCAL.
     - i. inv LOCAL. s.
       erewrite <- Memory.write_get_diff; eauto.
     - i. inv LOCAL1. inv LOCAL2. s.
@@ -822,7 +822,7 @@ Module Local.
     (<<GET: Memory.get l t mem2 = Some (f, m)>>) /\
     (<<GETP: Memory.get l t lc2.(Local.promises) = None>>).
   Proof.
-    inv STEP; eauto; try by (inv LOCAL; eauto).
+    inv STEP; eauto; try sfby (inv LOCAL; eauto).
     - inv LOCAL.
       eauto using Memory.write_non_promised.
     - inv LOCAL1. inv LOCAL2.

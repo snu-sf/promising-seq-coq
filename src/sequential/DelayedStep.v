@@ -1,5 +1,5 @@
-Require Import RelationClasses.
-Require Import Program.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import Program.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -11,33 +11,33 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Behavior.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Behavior.
 
-Require Import PromiseConsistent.
-Require Import Cover.
-Require Import MemorySplit.
-Require Import MemoryMerge.
-Require Import FulfillStep.
-Require Import Pred.
-Require Import Trace.
-Require Import MemoryProps.
-Require Import LowerMemory.
-Require Import FulfillStep.
-Require Import ReorderStepPromise.
-Require Import Pred.
-Require Import Trace.
+Require Import prop.PromiseConsistent.
+Require Import prop.Cover.
+Require Import prop.MemorySplit.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
+Require Import prop.Pred.
+Require Import prop.Trace.
+Require Import prop.MemoryProps.
+Require Import sequential.LowerMemory.
+Require Import prop.FulfillStep.
+Require Import prop.ReorderStepPromise.
+Require Import prop.Pred.
+Require Import prop.Trace.
 
-Require Import SeqLib.
-Require Import Delayed.
+Require Import sequential.SeqLib.
+Require Import sequential.Delayed.
 
 Set Implicit Arguments.
 
@@ -1181,7 +1181,7 @@ Module DConfiguration.
     revert ths_src sc_src mem_src WF_SRC TIDS_SRC.
     induction (IdentSet.elements tids); i.
     { esplits; [econs 1|]. ii. eauto. }
-    exploit (IN a); try by econs 1. i. des.
+    exploit (IN a); try sfby econs 1. i. des.
     exploit TERMINAL; eauto. i. des. inv THREAD.
     exploit ld_terminal; try exact LD_THREAD; eauto. s. i. des.
     rewrite PROMISES in *.
@@ -1201,7 +1201,7 @@ Module DConfiguration.
       - eapply NOTIN; eauto. ii. des; ss. subst. ss.
     }
     { exploit IN; eauto. i. des. inv NODUP.
-      rewrite IdentMap.gso; try by (ii; subst; ss).
+      rewrite IdentMap.gso; try sfby (ii; subst; ss).
       esplits; eauto.
       exploit ld_future; try exact LD_THREAD0; [..|eauto]; ss; try apply WF2.
       inv WF2. inv WF. ss.

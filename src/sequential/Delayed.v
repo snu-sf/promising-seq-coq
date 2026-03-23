@@ -1,5 +1,5 @@
-Require Import RelationClasses.
-Require Import Program.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import Program.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -11,31 +11,31 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import PromiseConsistent.
-Require Import Cover.
-Require Import MemorySplit.
-Require Import MemoryMerge.
-Require Import FulfillStep.
-Require Import Pred.
-Require Import Trace.
-Require Import MemoryProps.
-Require Import LowerMemory.
-Require Import FulfillStep.
-Require Import ReorderStepPromise.
-Require Import Pred.
-Require Import Trace.
+Require Import prop.PromiseConsistent.
+Require Import prop.Cover.
+Require Import prop.MemorySplit.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
+Require Import prop.Pred.
+Require Import prop.Trace.
+Require Import prop.MemoryProps.
+Require Import sequential.LowerMemory.
+Require Import prop.FulfillStep.
+Require Import prop.ReorderStepPromise.
+Require Import prop.Pred.
+Require Import prop.Trace.
 
-Require Import SeqLib.
+Require Import sequential.SeqLib.
 
 Set Implicit Arguments.
 
@@ -444,8 +444,8 @@ Lemma same_memory_promise_step
       (MEM: th1.(Thread.memory) = th1'.(Thread.memory)):
   th2.(Thread.memory) = th2'.(Thread.memory).
 Proof.
-  inv STEP; inv STEP0; try by inv LOCAL; ss.
-  inv STEP'; inv STEP; try by inv LOCAL0; ss.
+  inv STEP; inv STEP0; try sfby inv LOCAL; ss.
+  inv STEP'; inv STEP; try sfby inv LOCAL0; ss.
   inv LOCAL. inv LOCAL0. ss. subst.
   exploit Memory.promise_op; try exact PROMISE0. i.
   exploit Memory.promise_op; try exact PROMISE1. i.
@@ -569,7 +569,7 @@ Lemma lower_step_future
   (<<MEM: lower_memory th2.(Thread.memory) th1.(Thread.memory)>>).
 Proof.
   inv STEP. splits; ss.
-  { inv STEP0. inv LOCAL; ss; try by inv LOCAL0; ss.
+  { inv STEP0. inv LOCAL; ss; try sfby inv LOCAL0; ss.
     - inv LOCAL0. ss.
       eapply write_lower_promises_le; eauto.
     - inv LOCAL1. inv LOCAL2. ss.
@@ -1371,8 +1371,8 @@ Lemma write_tview_mon_non_release
 Proof.
   unfold TView.write_tview, View.singleton_ur_if.
   econs; repeat (condtac; aggrtac);
-    (try by etrans; [apply TVIEW|aggrtac]);
-    (try by rewrite <- ? View.join_r; econs; aggrtac);
+    (try sfby etrans; [apply TVIEW|aggrtac]);
+    (try sfby rewrite <- ? View.join_r; econs; aggrtac);
     (try apply WF2).
 Qed.
 
@@ -1387,8 +1387,8 @@ Lemma read_fence_tview_mon_non_release
 Proof.
   unfold TView.read_fence_tview.
   econs; repeat (condtac; aggrtac);
-    (try by etrans; [apply TVIEW|aggrtac]);
-    (try by rewrite <- ? View.join_r; aggrtac;
+    (try sfby etrans; [apply TVIEW|aggrtac]);
+    (try sfby rewrite <- ? View.join_r; aggrtac;
      rewrite <- ? TimeMap.join_r; apply TVIEW).
 Qed.
 
@@ -1404,8 +1404,8 @@ Lemma write_fence_tview_mon_non_release
 Proof.
   unfold TView.write_fence_tview, TView.write_fence_sc.
   econs; repeat (condtac; aggrtac).
-  all: try by destruct ord1, ord2; ss.
-  all: try by etrans; [apply TVIEW|aggrtac].
+  all: try sfby destruct ord1, ord2; ss.
+  all: try sfby etrans; [apply TVIEW|aggrtac].
 Qed.
 
 Lemma future_write_lower

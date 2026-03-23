@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,28 +13,28 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Behavior.
-Require Import Single.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Behavior.
+Require Import prop.Single.
 
-Require Import OrdStep.
-Require Import RARace.
-Require Import SCStep.
-Require Import Stable.
+Require Import ldrfra.OrdStep.
+Require Import ldrfra.RARace.
+Require Import ldrfsc.SCStep.
+Require Import ldrfra.Stable.
 
-Require Import MemoryProps.
-Require Import Mapping.
-Require Import SplitCertification.
+Require Import prop.MemoryProps.
+Require Import prop.Mapping.
+Require Import prop.SplitCertification.
 
-Require Import LocalDRFRA.
+Require Import ldrfra.LocalDRFRA.
 
 Section SIM.
 

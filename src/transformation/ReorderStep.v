@@ -7,28 +7,28 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
-Require Import Progress.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
+Require Import lang.Progress.
 
-Require Import MemoryReorder.
-Require Import MemoryMerge.
-Require Import FulfillStep.
-Require Import PromiseConsistent.
-Require Export ReorderStepPromise.
+Require Import prop.MemoryReorder.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
+Require Import prop.PromiseConsistent.
+Require Export prop.ReorderStepPromise.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
 
-Require Import ReorderTView.
+Require Import transformation.ReorderTView.
 
 Set Implicit Arguments.
 
@@ -46,7 +46,7 @@ Lemma future_read_step
 Proof.
   inv STEP. exploit Memory.future_weak_get1; eauto; ss. i. des. inv MSG_LE.
   esplits.
-  - econs; eauto; try by etrans; eauto.
+  - econs; eauto; try sfby etrans; eauto.
     eapply TViewFacts.readable_mon; eauto; refl.
   - auto.
   - econs; s.
@@ -174,7 +174,7 @@ Proof.
       exploit CLOSED; try exact GET0. i. des. f_equal.
       inv MSG_WF. inv MSG_WF0.
       apply TView.antisym; apply ReorderTView.read_read_tview;
-        (try by apply WF0); eauto.
+        (try sfby apply WF0); eauto.
 Qed.
 
 Lemma reorder_read_promise
@@ -209,7 +209,7 @@ Proof.
   }
   exploit Memory.promise_get1; eauto. i. des. inv MSG_LE.
   esplits; eauto.
-  - econs; eauto; try by etrans; eauto.
+  - econs; eauto; try sfby etrans; eauto.
     s. eapply TViewFacts.readable_mon; eauto; try refl.
   - s. econs; ss.
     + apply TViewFacts.read_tview_mon; try refl; try apply WF0; eauto.
@@ -284,8 +284,8 @@ Proof.
   { ii. inv H. congr. }
   i. des.
   exploit Local.promise_step_future; eauto. i. des.
-  exploit reorder_read_fulfill; try exact STEP5; try exact STEP3; eauto; try by viewtac. i. des.
-  exploit promise_fulfill_write_sim_memory; try exact x4; try exact STEP6; eauto; try by viewtac.
+  exploit reorder_read_fulfill; try exact STEP5; try exact STEP3; eauto; try sfby viewtac. i. des.
+  exploit promise_fulfill_write_sim_memory; try exact x4; try exact STEP6; eauto; try sfby viewtac.
   { i. hexploit ORD0; eauto. i. des.
     splits; auto. inv STEP1. auto.
   }
@@ -449,7 +449,7 @@ Proof.
     + s. unfold View.singleton_ur_if.
       econs; repeat (try condtac; try splits; aggrtac; eauto; try apply WRITABLE;
                      unfold TimeMap.singleton, LocFun.add in *);
-        (try by inv WRITABLE; eapply TimeFacts.le_lt_lt; eauto; aggrtac).
+        (try sfby inv WRITABLE; eapply TimeFacts.le_lt_lt; eauto; aggrtac).
 Qed.
 
 Lemma reorder_fulfill_promise
@@ -778,10 +778,10 @@ Proof.
   exploit Local.read_step_future; try exact STEP1; eauto. i. des.
   exploit fulfill_step_future; try exact STEP2; eauto. i. des.
   exploit reorder_fulfill_fulfill; try exact STEP2; try exact STEP3; eauto. i. des.
-  exploit fulfill_step_future; try exact STEP0; eauto; try by viewtac. i. des.
-  exploit reorder_read_fulfill; try exact STEP1; try exact STEP0; eauto; try by viewtac. i. des.
-  exploit fulfill_step_future; try exact STEP5; eauto; try by viewtac. i. des.
-  exploit Local.read_step_future; try exact STEP6; eauto; try by viewtac. i. des.
+  exploit fulfill_step_future; try exact STEP0; eauto; try sfby viewtac. i. des.
+  exploit reorder_read_fulfill; try exact STEP1; try exact STEP0; eauto; try sfby viewtac. i. des.
+  exploit fulfill_step_future; try exact STEP5; eauto; try sfby viewtac. i. des.
+  exploit Local.read_step_future; try exact STEP6; eauto; try sfby viewtac. i. des.
   exploit sim_local_fulfill_bot; try exact STEP4; try exact LOCAL0; try refl; eauto. i. des.
   esplits; eauto.
   etrans; eauto.
@@ -1102,7 +1102,7 @@ Lemma reorder_is_racy_read
 Proof.
   inv STEP1. inv STEP2. ss.
   econs; eauto; ss. inv READABLE.
-  condtac; try by (destruct ord2; ss).
+  condtac; try sfby (destruct ord2; ss).
   repeat apply TimeFacts.join_spec_lt; ss.
   - unfold View.singleton_ur_if. condtac; ss.
     + unfold TimeMap.singleton, LocFun.add, LocFun.find. condtac; ss.
@@ -1189,8 +1189,8 @@ Lemma reorder_is_racy_fence
 Proof.
   inv STEP1. inv STEP2. ss.
   econs; eauto; ss.
-  condtac; try by (destruct ordw2; ss).
-  condtac; try by (destruct ordr2; ss).
+  condtac; try sfby (destruct ordw2; ss).
+  condtac; try sfby (destruct ordr2; ss).
 Qed.
 
 Lemma reorder_racy_read_read

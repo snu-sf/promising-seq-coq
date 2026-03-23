@@ -5,25 +5,25 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
-Require Import SimThread.
-Require Import iCompatibility.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
+Require Import transformation.SimThread.
+Require Import transformation.iCompatibility.
 
-Require Import ReorderStep.
+Require Import transformation.ReorderStep.
 
-Require Import ITreeLang.
-Require Import Program.
+Require Import itree.ITreeLang.
+From Stdlib Require Import Program.
 
 Set Implicit Arguments.
 
@@ -139,7 +139,7 @@ Proof.
     exploit sim_local_read; try exact LOCAL0; try exact LOCAL; try apply SC; eauto; try refl; viewtac.
     { eapply Local.fence_step_future; eauto. }
     i. des.
-    exploit reorder_fence_read; try apply x0; try apply STEP_SRC; eauto; try by viewtac. i. des.
+    exploit reorder_fence_read; try apply x0; try apply STEP_SRC; eauto; try sfby viewtac. i. des.
     esplits.
     + ss.
     + econs 2; [|econs 1]. econs.
@@ -157,7 +157,7 @@ Proof.
     exploit sim_local_read; try exact LOCAL0; try exact LOCAL; try apply SC; eauto; try refl; viewtac.
     { eapply Local.fence_step_future; eauto. }
     i. des.
-    exploit reorder_fence_read; try apply x0; try apply STEP_SRC; eauto; try by viewtac. i. des.
+    exploit reorder_fence_read; try apply x0; try apply STEP_SRC; eauto; try sfby viewtac. i. des.
     esplits.
     + ss.
     + econs 2; [|econs 1]. econs.
@@ -177,7 +177,7 @@ Proof.
           end; eauto; try refl; viewtac.
     { eapply Local.fence_step_future; eauto. }
     i. des.
-    exploit reorder_fence_write; try apply x0; try apply STEP_SRC; eauto; try by viewtac. i. des.
+    exploit reorder_fence_write; try apply x0; try apply STEP_SRC; eauto; try sfby viewtac. i. des.
     esplits.
     + ss.
     + econs 2; [|econs 1]. econs.
@@ -196,13 +196,13 @@ Proof.
     exploit sim_local_read; try exact LOCAL1; try exact LOCAL; try apply SC; eauto; try refl; viewtac.
     { eapply Local.fence_step_future; eauto. }
     i. des.
-    exploit reorder_fence_read; try apply x0; try apply STEP_SRC; eauto; try by viewtac. i. des.
+    exploit reorder_fence_read; try apply x0; try apply STEP_SRC; eauto; try sfby viewtac. i. des.
     exploit Local.read_step_future; eauto. i. des.
     exploit Local.fence_step_future; eauto. i. des.
     generalize LOCAL3. i. rewrite LOCAL0 in LOCAL3.
     generalize SC0. i. rewrite SC in SC1.
     hexploit sim_local_write_bot; try exact LOCAL2; try apply SC1; eauto; try refl; viewtac. i. des.
-    exploit reorder_fence_write; try apply STEP2; try apply STEP_SRC0; eauto; try by viewtac. i. des.
+    exploit reorder_fence_write; try apply STEP2; try apply STEP_SRC0; eauto; try sfby viewtac. i. des.
     esplits.
     + ss.
     + econs 2; [|econs 1]. econs.

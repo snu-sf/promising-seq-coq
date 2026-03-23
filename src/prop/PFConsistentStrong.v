@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,28 +13,28 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Loc.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Pred.
-Require Import Trace.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import prop.Pred.
+Require Import prop.Trace.
 
-Require Import MemoryMerge.
-Require Import PromiseConsistent.
-Require Import Cover.
-Require Import PFConsistent.
-Require Import ReorderCancel.
-Require Import MemoryProps.
-Require Import OrderedTimes.
+Require Import prop.MemoryMerge.
+Require Import prop.PromiseConsistent.
+Require Import prop.Cover.
+Require Import prop.PFConsistent.
+Require Import prop.ReorderCancel.
+Require Import prop.MemoryProps.
+Require Import prop.OrderedTimes.
 
-Require Import Mapping.
-Require Import CapFlex.
-Require Import GoodFuture.
-Require Import PreReserve.
+Require Import prop.Mapping.
+Require Import prop.CapFlex.
+Require Import prop.GoodFuture.
+Require Import prop.PreReserve.
 
 Set Implicit Arguments.
 
@@ -211,7 +211,7 @@ Proof.
         { i. unfold ThreadEvent.is_cancel in *. des_ifs. }
         { ss. eauto. }
         ss. i. inv x1.
-        ss. unfold no_sc in BREAKQ. des_ifs; try by (exfalso; eauto).
+        ss. unfold no_sc in BREAKQ. des_ifs; try sfby (exfalso; eauto).
         + des; clarify. apply NNPP in BREAKQ.
           inv STEP0; inv STEP. ss. inv LOCAL. inv LOCAL0. ss.
           destruct ordw; ss. exploit PROMISES0; eauto. intros x.
@@ -759,8 +759,8 @@ Lemma ident_map_compose_tevent_weak f te0 te1 te2
     tevent_map_weak f te2 te0.
 Proof.
   inv MAP0; inv MAP1; econs;
-    (try by inv FROM0; auto);
-    (try by inv TO0; auto).
+    (try sfby inv FROM0; auto);
+    (try sfby inv TO0; auto).
   { inv TO0. etrans; eauto. }
   { revert_until MSGS.
     induction MSGS; i; inv MSGS0; ss. des.
@@ -778,8 +778,8 @@ Lemma ident_map_compose_tevent_weak2 f te0 te1 te2
     tevent_map_weak f te2 te0.
 Proof.
   inv MAP0; inv MAP1; econs;
-    (try by inv FROM; auto);
-    (try by inv TO; auto).
+    (try sfby inv FROM; auto);
+    (try sfby inv TO; auto).
   { inv TO. eauto. etrans; eauto. }
   { revert_until MSGS.
     induction MSGS; i; inv MSGS0; ss. des.

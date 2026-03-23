@@ -1,6 +1,6 @@
 Set Implicit Arguments.
 
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 
@@ -10,9 +10,9 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Axioms.
 
 From PromisingLib Require Import Event.
-Require Export Program.
+From Stdlib Require Export Program.
 
-Require Import Sequential.
+Require Import sequential.Sequential.
 
 
 Ltac unfold_flags := unfold Flags.update, Flags.add, Flags.sub, Flags.sub_opt, Flags.meet, Flags.join, Flags.minus in *.

@@ -1,12 +1,12 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From PromisingLib Require Import Basic.
 From PromisingLib Require Import Axioms.
 
-Require Export Program.
+From Stdlib Require Export Program.
 
-Require Import FoldN.
+Require Import optimizer.FoldN.
 
 Set Implicit Arguments.
 

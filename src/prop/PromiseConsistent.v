@@ -1,5 +1,5 @@
-Require Import Lia.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -12,15 +12,15 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
 
-Require Import FulfillStep.
+Require Import prop.FulfillStep.
 
 Set Implicit Arguments.
 
@@ -104,7 +104,7 @@ Proof.
   - dup X. revert X0.
     erewrite Memory.remove_o; eauto. condtac; ss; i.
     rewrite GET in *. inv X0.
-    apply CONS in X. ss. exploit X; try by (inv MSG_LE; ss). i.
+    apply CONS in X. ss. exploit X; try sfby (inv MSG_LE; ss). i.
     eapply TimeFacts.le_lt_lt; eauto.
     etrans; [|apply Time.join_l]. refl.
   - exploit fulfill_unset_promises; eauto. i. des. subst.
@@ -371,7 +371,7 @@ Proof.
     { inv PROMISE0; ss. }
     i. des.
     rewrite X0 in *. inv GET.
-    exploit CONS; eauto; try by (inv MSG_LE; ss). s. intros x.
+    exploit CONS; eauto; try sfby (inv MSG_LE; ss). s. intros x.
     apply TimeFacts.join_lt_des in x. des.
     revert BC. unfold TimeMap.singleton, LocFun.add. condtac; ss. i.
     econs. ss.

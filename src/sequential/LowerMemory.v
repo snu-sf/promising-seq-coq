@@ -1,4 +1,4 @@
-Require Import RelationClasses.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -10,21 +10,21 @@ From PromisingLib Require Import DenseOrder.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import Cover.
-Require Import MemorySplit.
-Require Import MemoryMerge.
-Require Import FulfillStep.
-Require Import MemoryProps.
+Require Import prop.Cover.
+Require Import prop.MemorySplit.
+Require Import prop.MemoryMerge.
+Require Import prop.FulfillStep.
+Require Import prop.MemoryProps.
 
 Set Implicit Arguments.
 
@@ -878,7 +878,7 @@ Proof.
       erewrite lower_memory_max_ts; eauto; try apply MEM_SRC; try apply MEM_TGT.
       rewrite BACK. econs. ss.
   }
-  { destruct (Memory.get loc to cap_tgt) as [[from msg]|] eqn:GET_TGT; try by econs.
+  { destruct (Memory.get loc to cap_tgt) as [[from msg]|] eqn:GET_TGT; try sfby econs.
     exfalso. inv CAP_SRC.
     exploit Memory.cap_inv; try exact CAP_TGT; eauto. i. des.
     - generalize (LOWER loc to). rewrite x0. i. inv H.

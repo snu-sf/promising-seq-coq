@@ -6,21 +6,21 @@ From PromisingLib Require Import Basic.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import PromiseConsistent.
+Require Import prop.PromiseConsistent.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
-Require Import SimThread.
-Require Import Simulation.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
+Require Import transformation.SimThread.
+Require Import transformation.Simulation.
 
 Set Implicit Arguments.
 
@@ -237,7 +237,7 @@ Proof.
               exploit SIM; try eapply H; eauto. intros x2. des.
               eexists.
               eapply sim_thread_future; try exact x2;
-                try by (etrans; [eauto using Memory.future_future_weak|
+                try sfby (etrans; [eauto using Memory.future_future_weak|
                                  etrans; eauto using Memory.future_future_weak]).
         - ss. inv X. esplits; eauto.
           + destruct e0; ss.
@@ -253,7 +253,7 @@ Proof.
                 exploit SIM; try eapply H; eauto. i. des.
                 eexists.
                 eapply sim_thread_future; try exact x0; eauto;
-                  try by (etrans; [eauto using Memory.future_future_weak|
+                  try sfby (etrans; [eauto using Memory.future_future_weak|
                                    etrans; eauto using Memory.future_future_weak]). }
       }
       { esplits; eauto.
@@ -273,7 +273,7 @@ Proof.
             exploit SIM; try eapply H; eauto. intros x2. des.
             eexists.
             eapply sim_thread_future; try exact x2;
-              try by (etrans; [eauto using Memory.future_future_weak|
+              try sfby (etrans; [eauto using Memory.future_future_weak|
                                etrans; eauto using Memory.future_future_weak]).
       }
   Unshelve.

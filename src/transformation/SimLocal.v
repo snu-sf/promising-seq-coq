@@ -1,5 +1,5 @@
-Require Import RelationClasses.
-Require Import List.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import List.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -10,21 +10,21 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import MemoryFacts.
-Require Import MemoryDomain.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.MemoryFacts.
+Require Import lang.MemoryDomain.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import FulfillStep.
+Require Import prop.FulfillStep.
 
-Require Import SimMemory.
-Require Import SimPromises.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
 
 Set Implicit Arguments.
 
@@ -565,7 +565,7 @@ Proof.
   econs; eauto.
   - eapply TViewFacts.racy_view_mon; eauto. apply LOCAL1.
   - inv MSG; ss.
-  - i. exploit MSG2; try by destruct ord_src, ord_tgt; inv ORD.
+  - i. exploit MSG2; try sfby destruct ord_src, ord_tgt; inv ORD.
     i. subst. inv MSG. ss.
 Qed.
 
@@ -618,7 +618,7 @@ Lemma sim_local_racy_update
       (ORDW: Ordering.le ordw_src ordw_tgt):
   <<STEP_SRC: Local.racy_update_step lc1_src mem1_src loc to ordr_src ordw_src>>.
 Proof.
-  inv STEP_TGT; try by hexploit sim_local_promise_consistent; eauto.
+  inv STEP_TGT; try sfby hexploit sim_local_promise_consistent; eauto.
   exploit sim_local_is_racy; eauto. i. des.
   hexploit sim_local_promise_consistent; eauto.
 Qed.
@@ -648,30 +648,30 @@ Lemma sim_local_program_step
 Proof.
   destruct th1_src. ss. subst. inv STEP_TGT; ss.
   inv LOCAL0; ss.
-  - esplits; (try by econs; [|econs 1]; eauto); ss.
+  - esplits; (try sfby econs; [|econs 1]; eauto); ss.
   - exploit sim_local_read; eauto; try refl. i. des.
-    esplits; (try by econs; [|econs 2]; eauto); ss.
-  - hexploit sim_local_write_bot; eauto; try refl; try by viewtac. i. des.
-    esplits; (try by econs; [|econs 3]; eauto); ss.
+    esplits; (try sfby econs; [|econs 2]; eauto); ss.
+  - hexploit sim_local_write_bot; eauto; try refl; try sfby viewtac. i. des.
+    esplits; (try sfby econs; [|econs 3]; eauto); ss.
   - exploit Local.read_step_future; eauto. i. des.
     exploit sim_local_read; eauto; try refl. i. des.
     exploit Local.read_step_future; eauto. i. des.
-    hexploit sim_local_write_bot; eauto; try refl; try by viewtac. i. des.
-    esplits; (try by econs; [|econs 4]; eauto); ss.
+    hexploit sim_local_write_bot; eauto; try refl; try sfby viewtac. i. des.
+    esplits; (try sfby econs; [|econs 4]; eauto); ss.
   - exploit sim_local_fence; eauto; try refl. i. des.
-    esplits; (try by econs; [|econs 5]; eauto); ss.
+    esplits; (try sfby econs; [|econs 5]; eauto); ss.
   - exploit sim_local_fence; eauto; try refl. i. des.
-    esplits; (try by econs; [|econs 6]; eauto); ss.
+    esplits; (try sfby econs; [|econs 6]; eauto); ss.
   - exploit sim_local_failure; eauto. i. des.
-    esplits; (try by econs; [|econs 7]; eauto); ss.
+    esplits; (try sfby econs; [|econs 7]; eauto); ss.
   - exploit sim_local_write_na; eauto; try refl. i. des.
-    esplits; (try by econs; [|econs 8]; eauto); ss.
+    esplits; (try sfby econs; [|econs 8]; eauto); ss.
   - exploit sim_local_racy_read; eauto; try refl. i. des.
-    esplits; (try by econs; [|econs 9]; eauto); ss.
+    esplits; (try sfby econs; [|econs 9]; eauto); ss.
   - exploit sim_local_racy_write; eauto; try refl. i. des.
-    esplits; (try by econs; [|econs 10]; eauto); ss.
+    esplits; (try sfby econs; [|econs 10]; eauto); ss.
   - exploit sim_local_racy_update; eauto; try refl. i. des.
-    esplits; (try by econs; [|econs 11]; eauto); ss.
+    esplits; (try sfby econs; [|econs 11]; eauto); ss.
 Qed.
 
 Lemma sim_local_lower_src
@@ -783,7 +783,7 @@ Proof.
   { eapply IHdom; eauto. i. exploit FINITE'; eauto. intros x. inv x; ss.
     inv H1. rewrite H in X. inv X. ss. }
   exploit MemoryFacts.promise_exists_None; eauto.
-  { eapply MemoryFacts.released_time_lt; [by apply MEM1_SRC|]. apply LOCAL1_SRC. eauto. }
+  { eapply MemoryFacts.released_time_lt; [sfby apply MEM1_SRC|]. apply LOCAL1_SRC. eauto. }
   i. des.
   exploit Memory.promise_future; try exact x0; try apply LOCAL1_SRC; eauto. i. des.
   exploit sim_local_lower_src; eauto. i. des.

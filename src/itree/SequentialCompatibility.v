@@ -1,4 +1,4 @@
-From ITree Require Export ITree Subevent.
+From ITree Require Export ITree Core.Subevent.
 
 From ITree Require Export
      ITree
@@ -6,12 +6,12 @@ From ITree Require Export
      Events.MapDefault
      Events.State
      Events.StateFacts
-     EqAxiom
+     Eq.EqAxiom
 .
 From ExtLib Require Export
      Data.String
      Data.Map.FMapAList
-     Functor FunctorLaws
+     Structures.Functor Structures.FunctorLaws
      Structures.Maps
 .
 
@@ -27,9 +27,9 @@ Open Scope itree_scope.
 
 Set Implicit Arguments.
 
-Require Import RelationClasses.
-Require Import List.
-Require Import String.
+From Stdlib Require Import RelationClasses.
+From Stdlib Require Import List.
+From Stdlib Require Import String.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -40,13 +40,13 @@ From PromisingLib Require Import Language.
 From PromisingLib Require Import Axioms.
 
 From PromisingLib Require Import Event.
-Require Export ITreeLib.
+Require Export itree.ITreeLib.
 
-Require Import Sequential.
-Require Import SequentialITree.
-Require Import SeqAux.
-Require Import FlagAux.
-Require Import ITreeLang.
+Require Import sequential.Sequential.
+Require Import itree.SequentialITree.
+Require Import sequential.SeqAux.
+Require Import sequential.FlagAux.
+Require Import itree.ITreeLang.
 
 
 
@@ -560,7 +560,7 @@ Proof.
   { refl. }
 Qed.
 
-Require Import NoMix.
+Require Import sequential.NoMix.
 
 Section NOMIX.
   Variable loc_na: Loc.t -> Prop.

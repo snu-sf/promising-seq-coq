@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,28 +13,28 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import PromiseConsistent.
-Require Import Trace.
-Require Import MemoryProps.
-Require Import Mapping.
-Require Import JoinedView.
+Require Import prop.PromiseConsistent.
+Require Import prop.Trace.
+Require Import prop.MemoryProps.
+Require Import prop.Mapping.
+Require Import prop.JoinedView.
 
-Require Import PFStep.
-Require Import OrdStep.
-Require Import Writes.
-Require Import WStep.
-Require Import Stable.
-Require Import PFtoAPFSim.
-Require Import APFtoRASim.
+Require Import ldrfpf.PFStep.
+Require Import ldrfra.OrdStep.
+Require Import ldrfra.Writes.
+Require Import ldrfra.WStep.
+Require Import ldrfra.Stable.
+Require Import ldrfra.PFtoAPFSim.
+Require Import ldrfra.APFtoRASim.
 
 Set Implicit Arguments.
 
@@ -769,7 +769,7 @@ Module PFtoRAThread.
       inv STEP.
       - left. esplits; eauto; try econs 1; econs.
       - exploit sim_thread_step; eauto. i. des.
-        + left. esplits; (try by econs 2; eauto); ss.
+        + left. esplits; (try sfby econs 2; eauto); ss.
         + right. eauto.
     Qed.
 

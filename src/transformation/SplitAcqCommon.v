@@ -6,21 +6,21 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
-Require Import Configuration.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
+Require Import lang.Configuration.
 
-Require Import FulfillStep.
+Require Import prop.FulfillStep.
 
-Require Import SimMemory.
-Require Import SimPromises.
-Require Import SimLocal.
-Require Import SimThread.
+Require Import transformation.SimMemory.
+Require Import transformation.SimPromises.
+Require Import transformation.SimLocal.
+Require Import transformation.SimThread.
 
 Set Implicit Arguments.
 
@@ -119,8 +119,8 @@ Proof.
     eapply TimeFacts.le_lt_lt; eauto.
   - econs; eauto. s. unfold TView.write_tview, TView.read_fence_tview. ss.
     econs; ss; repeat (try condtac; aggrtac).
-    all: try by destruct ord_src, ord_tgt.
-    all: try by apply WF1_TGT.
+    all: try sfby destruct ord_src, ord_tgt.
+    all: try sfby apply WF1_TGT.
     + etrans; [apply LOCAL1|]. aggrtac.
     + etrans; [apply LOCAL1|]. aggrtac.
     + etrans; [apply WF1_SRC|]. etrans; [apply LOCAL1|]. aggrtac.
@@ -196,14 +196,14 @@ Proof.
   inv LOCAL1. inv STEP_TGT.
   exploit sim_memory_get; try apply GET; try apply MEM1. i. des. inv MSG.
   esplits; eauto.
-  - econs; eauto; try by (etrans; eauto). inv READABLE. econs; ss; i.
+  - econs; eauto; try sfby (etrans; eauto). inv READABLE. econs; ss; i.
     + rewrite <- PLN. apply TVIEW.
     + rewrite <- RLX; ss. apply TVIEW.
   - econs; eauto. s.
     unfold TView.read_tview, TView.read_fence_tview. ss.
     econs; repeat (condtac; aggrtac).
-    all: try by apply TVIEW.
-    all: try by apply WF1_TGT.
+    all: try sfby apply TVIEW.
+    all: try sfby apply WF1_TGT.
     + rewrite <- ? View.join_l. etrans; [apply TVIEW|]. apply WF1_TGT.
     + inv MEM1_TGT. exploit CLOSED; eauto. i. des.
       apply View.unwrap_opt_wf. inv MSG_WF. ss.

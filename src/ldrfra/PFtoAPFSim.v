@@ -1,6 +1,6 @@
-Require Import Lia.
-Require Import Bool.
-Require Import RelationClasses.
+From Stdlib Require Import Lia.
+From Stdlib Require Import Bool.
+From Stdlib Require Import RelationClasses.
 
 From sflib Require Import sflib.
 From Paco Require Import paco.
@@ -13,24 +13,24 @@ From PromisingLib Require Import Loc.
 From PromisingLib Require Import Language.
 
 From PromisingLib Require Import Event.
-Require Import Time.
-Require Import View.
-Require Import Cell.
-Require Import Memory.
-Require Import TView.
-Require Import Local.
-Require Import Thread.
+Require Import lang.Time.
+Require Import lang.View.
+Require Import lang.Cell.
+Require Import lang.Memory.
+Require Import lang.TView.
+Require Import lang.Local.
+Require Import lang.Thread.
 
-Require Import MemoryMerge.
-Require Import MemoryReorder.
-Require Import Cover.
-Require Import MemoryProps.
+Require Import prop.MemoryMerge.
+Require Import prop.MemoryReorder.
+Require Import prop.Cover.
+Require Import prop.MemoryProps.
 
-Require Import PFStep.
-Require Import OrdStep.
-Require Import Writes.
-Require Import WStep.
-Require Import Stable.
+Require Import ldrfpf.PFStep.
+Require Import ldrfra.OrdStep.
+Require Import ldrfra.Writes.
+Require Import ldrfra.WStep.
+Require Import ldrfra.Stable.
 
 Set Implicit Arguments.
 
@@ -150,7 +150,7 @@ Module PFtoAPFSim.
           exploit H; try eapply GET'. i.
           exploit MIN; try exact x; eauto. i. congr.
       }
-      clear H. induction dom; try by (left; ss). des.
+      clear H. induction dom; try sfby (left; ss). des.
       - destruct (TimeFacts.le_lt_dec a ts).
         { left. i. inv IN; eauto. timetac. }
         destruct (Memory.get loc a mem) as [[]|] eqn:GETA; cycle 1.
@@ -719,7 +719,7 @@ Module PFtoAPFSim.
       (<<STEP_SRC: Local.racy_update_step lc1_src mem1_src loc to ordr ordw>>) \/
       (<<RACE: RARaceW.wr_race L rels (Local.tview lc1_src) loc ordr>>).
     Proof.
-      inv STEP_TGT; try by left; splits; eauto.
+      inv STEP_TGT; try sfby left; splits; eauto.
       exploit is_racy; eauto. i. des.
       - left. eauto.
       - right. unfold RARaceW.wr_race.
@@ -1011,7 +1011,7 @@ Module PFtoAPFSim.
             exploit SOUND0; eauto.
           + subst. inv x1.
             unfold Memory.get in MIDDLE. erewrite MIDDLE; eauto.
-            econs; (try by unfold Memory.get; rewrite <- EQ; eauto); ss.
+            econs; (try sfby unfold Memory.get; rewrite <- EQ; eauto); ss.
           + subst. unfold Memory.max_ts in *. rewrite EQ; ss. eauto.
         - destruct (Cell.get ts (cap_tgt loc)) as [[from2 msg2]|] eqn:GET2; ss.
           inv CAP_SRC. exploit Memory.cap_inv; try exact CAP_TGT; eauto. i. des.
@@ -1020,7 +1020,7 @@ Module PFtoAPFSim.
             rewrite GET1 in x. ss.
           + subst. inv x1.
             unfold Memory.get in MIDDLE. erewrite MIDDLE in GET1; eauto.
-            econs; (try by unfold Memory.get; rewrite EQ; eauto); ss.
+            econs; (try sfby unfold Memory.get; rewrite EQ; eauto); ss.
           + subst. unfold Memory.max_ts, Memory.get in *.
             rewrite <- EQ in GET1; ss. rewrite BACK in GET1. ss.
       }
